@@ -1,0 +1,26 @@
+# Readline configuration — managed by chezmoi
+
+# Inherit system-wide readline settings first
+$include /etc/inputrc
+
+# Tab completion improvements
+set completion-ignore-case on
+set show-all-if-ambiguous on
+set show-all-if-unmodified on
+set colored-stats on
+set visible-stats on
+set mark-symlinked-directories on
+
+# Faster completion cycling
+set menu-complete-display-prefix on
+TAB: menu-complete
+"\e[Z": menu-complete-backward
+
+# Smarter history search: type prefix then arrow keys to filter
+"\e[A": history-search-backward
+"\e[B": history-search-forward
+
+# 8-bit clean input (UTF-8 friendly)
+set input-meta on
+set output-meta on
+set convert-meta off

@@ -1,0 +1,23 @@
+// Place your key bindings in this file to override the defaults
+[
+    {
+        "key": "ctrl+e",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": {
+            "text": "\u0005"
+        },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "alt+d",
+        "command": "compareSelected"
+    },
+    {
+        "key": "alt+p",
+        "command": "gitlens.diffWithPrevious"
+    },
+    {
+        "key": "alt+n",
+        "command": "gitlens.diffWithNext"
+    }
+]

@@ -1,0 +1,9 @@
+# ~/.bash_aliases — 标准 aliases（仅当文件不存在时由 chezmoi 创建）
+# 如需自定义，直接编辑此文件，chezmoi apply 不会覆盖已有的版本
+
+# 常用快捷命令
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+
+alias claude_yolo='claude --dangerously-skip-permissions'

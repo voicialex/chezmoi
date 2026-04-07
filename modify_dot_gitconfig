@@ -1,0 +1,17 @@
+#!/bin/sh
+# chezmoi modify_ script for ~/.gitconfig
+# Prepends include directive if absent; preserves all existing content.
+# Git config priority: later entries override earlier ones,
+# so existing [user] in this file will override user.conf defaults.
+
+content=$(cat)
+
+if ! printf '%s' "$content" | grep -qF "~/.gitconfig.d/"; then
+    printf '[include]\n'
+    printf '    path = ~/.gitconfig.d/user.conf\n'
+    printf '    path = ~/.gitconfig.d/core.conf\n'
+    printf '    path = ~/.gitconfig.d/alias.conf\n'
+    printf '\n'
+fi
+
+printf '%s' "$content"

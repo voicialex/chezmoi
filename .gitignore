@@ -1,0 +1,6 @@
+# Temporary download archives
+*.tar
+*.tar.gz
+*.tgz
+*.tar.xz
+*.tar.bz2

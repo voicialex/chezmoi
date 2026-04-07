@@ -1,0 +1,32 @@
+" 不兼容老 vi 模式
+set nocompatible
+
+" 显示行号（当前行绝对行号，其他行相对距离）
+set number
+set relativenumber
+
+" Tab 键 = 4 个空格
+set tabstop=4 shiftwidth=4 expandtab
+set autoindent
+
+" 搜索：高亮 + 实时匹配 + 忽略大小写（除非含大写字母）
+set hlsearch incsearch ignorecase smartcase
+
+" 系统剪贴板（复制粘贴和外面共享）
+set clipboard=unnamedplus
+
+" 底部状态栏始终显示
+set laststatus=2
+
+" 命令行 Tab 补全增强
+set wildmenu
+
+" 编码
+set encoding=utf-8
+
+" 语法高亮 + 暗色主题
+syntax on
+colorscheme desert
+
+" 文件类型自动识别 + 缩进
+filetype plugin indent on

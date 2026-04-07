@@ -1,0 +1,41 @@
+{{- $isWSL := and (eq .chezmoi.os "linux") (or (env "WSL_DISTRO_NAME") (env "WSL_INTEROP")) -}}
+{{- $isDesktop := or (env "WAYLAND_DISPLAY") (env "DISPLAY") -}}
+
+# 每台机器本地专用的 bash_local，不纳入版本管理
+dot_bash_local
+
+# 平台适配:
+# - WSL: 不部署 Linux 桌面终端主题
+# - Headless: 不部署任何 GUI 终端主题相关文件
+{{- if or $isWSL (not $isDesktop) }}
+dot_bash_components/bashrc.d/gnome-terminal-theme.sh
+dot_config/gnome-terminal/
+.chezmoiscripts/terminal-theme/run_once_apply-gnome-terminal-theme.sh
+{{- end }}
+
+# 没有 Claude Code 就不部署 .claude 配置和 claudeline 安装脚本
+{{- if not (lookPath "claude") }}
+dot_claude/
+.chezmoiscripts/claude/run_install-claudeline.sh
+{{- end }}
+
+# 没有 Codex 就不部署 .codex 配置
+{{- if not (lookPath "codex") }}
+dot_codex/
+{{- end }}
+
+# 没有 Neovim 就不部署 nvim 配置目录
+{{- if not (lookPath "nvim") }}
+# 兼容 source-path 与 target-path 两种匹配写法
+dot_config/nvim
+dot_config/nvim/**
+.config/nvim
+.config/nvim/**
+{{- end }}
+
+# 源目录中的 AI 指令和文档文件，不部署到 $HOME
+.gitignore
+CLAUDE.md
+AGENTS.md
+README.md
+docs/

@@ -1,0 +1,12 @@
+# Theme: Catppuccin Mocha
+# 柔和舒适，长时间使用最舒服
+
+THEME_NAME="Catppuccin Mocha"
+THEME_BG="#1e1e2e"
+THEME_FG="#cdd6f4"
+THEME_BOLD="#cdd6f4"
+THEME_CURSOR_BG="#f5e0dc"
+THEME_CURSOR_FG="#1e1e2e"
+THEME_HIGHLIGHT_BG="#585b70"
+THEME_HIGHLIGHT_FG="#cdd6f4"
+THEME_PALETTE="#45475a,#f38ba8,#a6e3a1,#f9e2af,#89b4fa,#f5c2e7,#94e2d5,#bac2de,#585b70,#f38ba8,#a6e3a1,#f9e2af,#89b4fa,#f5c2e7,#94e2d5,#a6adc8"

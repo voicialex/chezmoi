@@ -1,0 +1,15 @@
+#!/bin/sh
+# chezmoi modify_ script: prepend Include directive to existing ~/.ssh/config
+# Receives current file content on stdin, writes modified content to stdout
+# Idempotent: only adds Include if not already present
+
+INCLUDE="Include config.d/*.conf"
+
+content=$(cat)
+
+if printf '%s' "$content" | grep -qF "Include config.d/"; then
+    printf '%s' "$content"
+else
+    printf '%s\n\n' "$INCLUDE"
+    printf '%s' "$content"
+fi

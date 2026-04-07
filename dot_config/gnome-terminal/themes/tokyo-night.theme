@@ -1,0 +1,12 @@
+# Theme: Tokyo Night
+# 深蓝日系风格，辨识度高
+
+THEME_NAME="Tokyo Night"
+THEME_BG="#1a1b26"
+THEME_FG="#a9b1d6"
+THEME_BOLD="#a9b1d6"
+THEME_CURSOR_BG="#c0caf5"
+THEME_CURSOR_FG="#1a1b26"
+THEME_HIGHLIGHT_BG="#33467c"
+THEME_HIGHLIGHT_FG="#c0caf5"
+THEME_PALETTE="#15161e,#f7768e,#9ece6a,#e0af68,#7aa2f7,#bb9af7,#7dcfff,#a9b1d6,#414868,#f7768e,#9ece6a,#e0af68,#7aa2f7,#bb9af7,#7dcfff,#c0caf5"
