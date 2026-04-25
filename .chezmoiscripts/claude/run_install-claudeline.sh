@@ -8,14 +8,8 @@ warn() {
  echo "$1" >&2
 }
 
-manual_install_hint() {
- warn "Install claudeline manually with:"
- warn "  mkdir -p \"$CLAUDE_DIR\" && curl -fsSL \"$URL\" | tar xz -C \"$CLAUDE_DIR\" claudeline && chmod +x \"$BINARY\""
-}
-
 # Skip if Claude Code is not installed
 if ! command -v claude >/dev/null 2>&1; then
- echo "Claude Code not found, skipping claudeline install"
  exit 0
 fi
 
@@ -46,8 +40,8 @@ TMP_DIR=$(mktemp -d)
 trap 'rm -rf "$TMP_DIR"' EXIT HUP INT TERM
 
 if ! curl -fsSL "$URL" | tar xz -C "$TMP_DIR" claudeline; then
- warn "Failed to download claudeline, skipping install"
- manual_install_hint
+ warn "[WARN] Failed to download claudeline"
+ warn "       Manual: mkdir -p \"$CLAUDE_DIR\" && curl -fsSL \"$URL\" | tar xz -C \"$CLAUDE_DIR\" claudeline && chmod +x \"$BINARY\""
  exit 0
 fi
 

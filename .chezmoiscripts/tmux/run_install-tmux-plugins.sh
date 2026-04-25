@@ -17,10 +17,11 @@ if [ ! -d "${TPM_DIR}" ]; then
     echo "TPM 安装完成"
 fi
 
-# 安装所有插件
-# TPM 的 bin/install_plugins 可以在 tmux 外直接运行
+# 安装缺失的插件（全部已安装时静默跳过）
 if [ -x "${TPM_DIR}/bin/install_plugins" ]; then
-    echo "正在安装 tmux 插件..."
-    "${TPM_DIR}/bin/install_plugins" 2>&1 || echo "tmux 插件安装出现问题，可稍后在 tmux 内按 prefix + I 重试"
-    echo "tmux 插件安装完成"
+    output=$("${TPM_DIR}/bin/install_plugins" 2>&1) || true
+    if ! echo "$output" | grep -q "Already installed"; then
+        echo "$output"
+        echo "tmux plugins installed"
+    fi
 fi

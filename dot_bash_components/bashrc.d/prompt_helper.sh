@@ -144,6 +144,7 @@ help-git() {
   [rebase]
     git rebase -i HEAD~3                      交互式整理最近 3 个提交
     git rebase -i <commit_id>                从指定提交之后开始整理
+    git rebase -i branch-name                把当前分支的提交移到目标分支最新位置之上
     pick / reword / squash / fixup / drop    常用动作
 
   [push]

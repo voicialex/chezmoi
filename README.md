@@ -3,8 +3,7 @@
 This directory is your chezmoi source state.
 
 - [File Naming](#file-naming)
-- [Installation](#installation)
-- [Initialize on a new machine](#initialize-on-a-new-machine)
+- [Installation & Initialization](#installation--initialization)
 - [Common Commands](#common-commands)
 - [Platform Profiles](#platform-profiles)
 - [Troubleshooting](#troubleshooting)
@@ -62,24 +61,39 @@ chezmoi 通过文件名前缀和后缀来决定如何处理文件。
 - 这样可以同时满足“功能归类”和“目标目录不被脚本文件污染”。
 - `.chezmoiscripts/00-core/run_00_show-apply-greeting.sh` 会在每次 `chezmoi apply` 开头输出当前配置版本（复用 `_greeting`）。
 
-## Installation
+## Installation & Initialization
+
+### Method 1: One-liner (install + init + apply)
 
 ```bash
-sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin"
-# 或者: sudo snap install chezmoi（WSL/容器可能不可用）
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
-source ~/.bashrc
+sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply https://github.com/voicialex/chezmoi.git
 chezmoi --version
 ```
 
-## Initialize on a new machine
+### Method 2: Manual download (when curl/network is slow)
+
+1. Go to [chezmoi releases](https://github.com/twpayne/chezmoi/releases) and download the `.deb` for your architecture (e.g. `chezmoi_2.58.0_linux_amd64.deb`).
+2. Install it:
 
 ```bash
-# 从远程仓库初始化（一键安装 + 部署）
-sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply https://github.com/voicialex/chezmoi.git
-# 或者从本地目录: cd /path/to/repo && chezmoi init
-chezmoi diff    # 可选: 查看变更
-chezmoi apply   # 部署到 $HOME
+sudo dpkg -i ~/Downloads/chezmoi_*.deb
+# or: sudo apt install ~/Downloads/chezmoi_*.deb
+```
+
+3. Then initialize from this repo:
+
+```bash
+# From remote
+chezmoi init --apply https://github.com/voicialex/chezmoi.git
+# Or from a local clone
+cd /path/to/chezmoi && chezmoi init
+```
+
+### After installation
+
+```bash
+chezmoi diff    # preview changes
+chezmoi apply   # deploy to $HOME
 ```
 
 - `~/.bash_aliases` — 使用 `create_` 前缀管理，首次 `chezmoi apply` 时创建标准版本，**已有则不覆盖**，用户可自由定制。

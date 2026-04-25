@@ -24,29 +24,23 @@ case "${OS}/${ARCH}" in
 esac
 
 echo ""
-echo "========== [CHEZMOI CHECK] =========="
-echo "[WARN] Neovim (nvim) is not installed."
-echo "After install, run: source ~/.bashrc"
-echo "Then run: chezmoi apply (to deploy nvim/LazyVim config)"
-echo ""
+echo "[WARN] Neovim (nvim) not installed"
 
 if [ -n "$ASSET" ]; then
-    echo "Platform: ${OS}/${ARCH}"
-    echo "Manual install steps:"
-    echo "  1) curl -LO ${DOWNLOAD_BASE}/${ASSET}"
-    echo "  2) tar xzf ${ASSET}"
-    echo "  3) sudo mv ${DIR_NAME} /opt/nvim"
-    echo "  4) /opt/nvim/bin/nvim --version | head -1"
-    echo "Then run: source ~/.bashrc"
+    echo "       Platform: ${OS}/${ARCH}"
+    echo "       Install:"
+    echo "         1) curl -LO ${DOWNLOAD_BASE}/${ASSET}"
+    echo "         2) tar xzf ${ASSET}"
+    echo "         3) sudo mv ${DIR_NAME} /opt/nvim"
+    echo "       After install: source ~/.bashrc && chezmoi apply"
 else
-    echo "Platform: ${OS}/${ARCH} (generic fallback)"
-    echo "Package manager options:"
-    echo "  - Ubuntu/Debian: sudo apt install -y neovim"
-    echo "  - Fedora: sudo dnf install -y neovim"
-    echo "  - Arch: sudo pacman -S --needed neovim"
-    echo "  - macOS (Homebrew): brew install neovim"
+    echo "       Platform: ${OS}/${ARCH} (generic)"
+    echo "       Install:"
+    echo "         Ubuntu/Debian: sudo apt install -y neovim"
+    echo "         Fedora:        sudo dnf install -y neovim"
+    echo "         Arch:          sudo pacman -S --needed neovim"
+    echo "         macOS:         brew install neovim"
 fi
 
-echo "Reference: ~/chezmoi/docs/nvim-setup.md"
-echo "========================================"
+echo "       Docs: ~/chezmoi/docs/nvim-setup.md"
 echo ""
