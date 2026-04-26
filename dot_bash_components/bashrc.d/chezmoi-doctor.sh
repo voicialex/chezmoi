@@ -2,6 +2,9 @@
 # 环境诊断工具：greeting 横幅 + chezmoi-doctor 检查命令
 # 位于 bashrc.d/，由 bashrc.tmpl 自动加载
 
+# 版本号（自动取最近 git 提交日期，无 git 时回退）
+_CHEZMOI_VERSION="v$(command -v git >/dev/null 2>&1 && git -C "$HOME/chezmoi" log -1 --format='%cd' --date=short || echo 'dev')"
+
 # ── 版本信息（简要） ──────────────────────────────────────
 _greeting() {
   local green='\033[01;32m'
@@ -11,7 +14,7 @@ _greeting() {
   local dim='\033[02m'
   local reset='\033[00m'
 
-  local version="${green}chezmoi${reset}-${cyan}v2026.04.24${reset}"
+  local version="${green}chezmoi${reset}-${cyan}${_CHEZMOI_VERSION}${reset}"
 
   local msg="${version}"
 
@@ -96,17 +99,23 @@ chezmoi-doctor() {
 
   echo ""
   echo "Clipboard:"
-  _chezmoi_check wl-copy || _chezmoi_check xclip || _chezmoi_check clip.exe
+  if [ -n "$WAYLAND_DISPLAY" ]; then
+    _chezmoi_check wl-copy
+  elif [ -n "${WSL_DISTRO_NAME:-}" ] || [ -n "${WSL_INTEROP:-}" ]; then
+    _chezmoi_check clip.exe
+  elif [ -n "$DISPLAY" ]; then
+    _chezmoi_check xclip
+  else
+    echo -e "  $no 无剪贴板工具（非桌面环境）"
+  fi
 
   echo ""
   echo "Config files:"
-  local _cf_ok='\033[01;32m✓\033[00m'
-  local _cf_no='\033[01;31m✗\033[00m'
   for f in ~/.bash_aliases ~/.bash_local ~/.tmux.conf; do
     if [ -f "$f" ]; then
-      echo -e "  $_cf_ok ${f/#$HOME/~}"
+      echo -e "  $ok ${f/#$HOME/~}"
     else
-      echo -e "  $_cf_no ${f/#$HOME/~}"
+      echo -e "  $no ${f/#$HOME/~}"
     fi
   done
 }

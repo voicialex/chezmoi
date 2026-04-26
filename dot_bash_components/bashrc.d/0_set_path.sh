@@ -12,9 +12,11 @@ _paths=(
 )
 
 for _p in "${_paths[@]}"; do
-  if [ -d "$_p" ] && ! echo "$PATH" | grep -qF "$_p"; then
-    export PATH="$_p:$PATH"
-  fi
+  [ -d "$_p" ] || continue
+  case ":${PATH}:" in
+    *":${_p}:"*) ;;
+    *) export PATH="$_p:$PATH" ;;
+  esac
 done
 
 unset _p _paths

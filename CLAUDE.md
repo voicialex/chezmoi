@@ -23,10 +23,14 @@ A chezmoi source state directory managing Bash dotfiles. Files are deployed to `
 
 `dot_bashrc.tmpl` is the main entry point. It sources all `~/.bash_components/bashrc.d/*.sh` in alphabetical order:
 - `0_set_path.sh` — adds common tool paths (nvim, bun, go, etc.) if they exist
-- `doctor.sh` — `_greeting()` version banner + `chezmoi-doctor` diagnostic command
+- `1_help-dispatcher.sh` — `help` dispatcher + loads `help.d/*.sh` topic files via `_help_desc` registration
+- `chezmoi-doctor.sh` — `_greeting()` version banner + `chezmoi-doctor` diagnostic command
 - `gnome-terminal-theme.sh` — GNOME Terminal theme config
-- `prompt_git.sh` — sets PS1 with git branch display
-- `prompt_helper.sh` — `help` / `help-*` cheat-sheet functions
+- `help.d/` — help topic subdirectory (sourced by `1_help-dispatcher.sh`), one file per topic
+  - `help-chezmoi.sh` / `help-claude.sh` / `help-codex.sh` / `help-conan.sh` / `help-copilot.sh`
+  - `help-git.sh` / `help-glab.sh` / `help-glm_claude.sh` / `help-net.sh` / `help-nvim.sh`
+  - `help-ssh.sh` / `help-tailscale.sh` / `help-terminal.sh` / `help-theme.sh` / `help-tmux.sh` / `help-vim.sh`
+- `prompt_git.sh` — sets PS1 with git branch display (independent color detection via tput)
 - `z_local-loader.sh` — sources `~/.bash_aliases` and `~/.bash_local` (z_ prefix ensures last load order)
 
 ## Managed vs Unmanaged Files

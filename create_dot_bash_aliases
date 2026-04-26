@@ -5,5 +5,3 @@
 alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
-
-alias claude_yolo='claude --dangerously-skip-permissions'

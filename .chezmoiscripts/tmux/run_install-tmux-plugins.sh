@@ -2,6 +2,8 @@
 # 首次部署时安装 tmux 插件管理器 (TPM) 及所有插件
 # 需要 git 和 tmux
 
+set -e
+
 command -v tmux >/dev/null 2>&1 || exit 0
 command -v git >/dev/null 2>&1 || exit 0
 

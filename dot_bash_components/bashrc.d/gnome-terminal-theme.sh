@@ -5,8 +5,6 @@
 #   theme list     同上
 #   theme <name>   切换到指定主题（支持 Tab 补全）
 
-_theme_dir="$HOME/.config/gnome-terminal/themes"
-
 # 检测 GNOME Terminal 环境
 _theme_available() {
     command -v dconf >/dev/null 2>&1 || return 1
@@ -52,6 +50,7 @@ _theme_apply() {
 
 # 列出主题
 _theme_list() {
+    local _td="$HOME/.config/gnome-terminal/themes"
     local _current=""
     local _ppath
     _ppath=$(_theme_profile_path) 2>/dev/null
@@ -60,7 +59,7 @@ _theme_list() {
     fi
 
     echo "可用主题:"
-    for f in "$_theme_dir"/*.theme; do
+    for f in "$_td"/*.theme; do
         [ -r "$f" ] || continue
         source "$f"
         if [ "$THEME_NAME" = "$_current" ]; then
@@ -75,11 +74,13 @@ _theme_list() {
 theme() {
     _theme_available || { echo "当前环境不支持 GNOME Terminal 主题"; return 1; }
 
+    local _td="$HOME/.config/gnome-terminal/themes"
+
     if [ -z "$1" ] || [ "$1" = "list" ]; then
         _theme_list
     else
         local _target
-        _target="$_theme_dir/${1}.theme"
+        _target="${_td}/${1}.theme"
         if [ -r "$_target" ]; then
             _theme_apply "$_target"
         else
@@ -90,14 +91,14 @@ theme() {
     fi
 }
 
-# Tab 补全
+# Tab 补全（用 grep 提取 THEME_NAME 避免 source 外部文件）
 _theme_completions() {
     local _cur="${COMP_WORDS[COMP_CWORD]}"
+    local _td="$HOME/.config/gnome-terminal/themes"
     local _names=""
-    for f in "$_theme_dir"/*.theme; do
+    for f in "$_td"/*.theme; do
         [ -r "$f" ] || continue
-        source "$f"
-        _names="${_names} $(basename "$f" .theme)"
+        _names="${_names} $(grep '^THEME_NAME=' "$f" | head -1 | cut -d= -f2 | tr -d "'\"")"
     done
     COMPREPLY=($(compgen -W "${_names}" -- "$_cur"))
 }
