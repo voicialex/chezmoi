@@ -1,0 +1,39 @@
+#!/usr/bin/env python3
+"""Merge chezmoi-managed keys into ~/.claude/settings.json.
+
+Reads existing settings from stdin (chezmoi pipes current file content),
+merges managed keys, preserves all user-set keys, writes result to stdout.
+"""
+
+import json
+import sys
+
+# Keys managed by chezmoi — these are always overwritten on apply
+MANAGED = {
+    "permissions": {
+        "allow": ["*"],
+        "deny": ["WebFetch", "WebSearch"],
+        "defaultMode": "bypassPermissions",
+    },
+    "skipDangerousModePermissionPrompt": True,
+    "statusLine": {
+        "type": "command",
+        "command": "/home/seb/.claude/claudeline -cwd -git-branch",
+    },
+    "extraKnownMarketplaces": {
+        "openai-codex": {
+            "source": {"source": "github", "repo": "openai/codex-plugin-cc"}
+        },
+        "karpathy-skills": {
+            "source": {"source": "github", "repo": "forrestchang/andrej-karpathy-skills"}
+        },
+    },
+}
+
+raw = sys.stdin.read().strip()
+settings = json.loads(raw) if raw else {}
+
+settings.update(MANAGED)
+
+json.dump(settings, sys.stdout, indent=2, ensure_ascii=False)
+sys.stdout.write("\n")

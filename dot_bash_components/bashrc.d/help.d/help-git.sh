@@ -28,11 +28,15 @@ help-git() {
     git merge --squash <branch>               压成一次提交后再统一 commit
 
   [show]
-    git show --stat <commit_sha>             查看提交改动文件
-    git show <commit_sha>                    查看提交详细内容
-    git show HEAD:<文件>                     查看已删除文件的内容（上一次提交）
-    git show HEAD~1:<文件>                   查看更早一次提交的文件内容
-    git diff HEAD -- <文件>                  对比当前与上次提交的差异（含删除）
+    git show --stat <commit>                 查看提交改动了哪些文件
+    git show <commit>                        查看提交的完整 diff
+    git show <commit>:<文件>                 查看指定提交中某文件的完整内容
+
+  [diff]
+    git diff -- <文件>                       工作区 vs 暂存区
+    git diff HEAD -- <文件>                  工作区 vs HEAD
+    git diff --cached -- <文件>              暂存区 vs HEAD（已 add 未 commit）
+    git diff <c1> <c2> -- <文件>             对比两个提交间的差异
 EOF
 
   local _alias_conf="$HOME/.gitconfig.d/alias.conf"

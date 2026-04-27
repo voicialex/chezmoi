@@ -15,8 +15,6 @@ fi
 
 CLAUDE_DIR="${HOME}/.claude"
 BINARY="${CLAUDE_DIR}/claudeline"
-SETTINGS="${CLAUDE_DIR}/settings.json"
-
 mkdir -p "$CLAUDE_DIR"
 
 # Skip if already installed and working
@@ -49,22 +47,3 @@ mv "$TMP_DIR/claudeline" "$BINARY"
 chmod +x "$BINARY"
 
 echo "Installed: $(${BINARY} -version 2>/dev/null || echo 'ok')"
-
-# Patch settings.json: add statusLine config if absent
-if ! command -v jq >/dev/null 2>&1; then
- echo "jq not found, skipping settings.json patch"
- exit 0
-fi
-
-if [ -f "$SETTINGS" ]; then
- if ! jq -e '.statusLine' "$SETTINGS" >/dev/null 2>&1; then
-   TMP=$(mktemp)
-   jq '. + {"statusLine": {"type": "command", "command": "'"${BINARY}"' -cwd -git-branch"}}' "$SETTINGS" > "$TMP" && mv "$TMP" "$SETTINGS"
-   echo "Added statusLine config to ${SETTINGS}"
- else
-   echo "statusLine already configured in ${SETTINGS}"
- fi
-else
- echo '{}' | jq '{"statusLine": {"type": "command", "command": "'"${BINARY}"' -cwd -git-branch"}}' > "$SETTINGS"
- echo "Created ${SETTINGS} with statusLine config"
-fi

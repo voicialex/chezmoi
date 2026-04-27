@@ -3,7 +3,7 @@
 # 位于 bashrc.d/，由 bashrc.tmpl 自动加载
 
 # 版本号（自动取最近 git 提交日期，无 git 时回退）
-_CHEZMOI_VERSION="v$(command -v git >/dev/null 2>&1 && git -C "$HOME/chezmoi" log -1 --format='%cd' --date=short || echo 'dev')"
+_CHEZMOI_VERSION="v$(git -C "$(sed -n 's/^sourceDir *= *"\(.*\)"/\1/p' ~/.config/chezmoi/chezmoi.toml 2>/dev/null)" log -1 --format='%cd' --date=short 2>/dev/null || echo 'dev')"
 
 # ── 版本信息（简要） ──────────────────────────────────────
 _greeting() {
