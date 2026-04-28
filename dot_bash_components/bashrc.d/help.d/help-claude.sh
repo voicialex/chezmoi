@@ -18,6 +18,10 @@ help-claude() {
     /rename <session-name>
     /context 查询当前会话上下文信息
 
+
+  Claudeline 状态栏更新:
+    rm -f ~/.claude/claudeline && chezmoi apply
+
   Agent Teams 模式:
     CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 \
       claude --dangerously-skip-permissions --teammate-mode tmux

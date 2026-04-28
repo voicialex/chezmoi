@@ -1,12 +1,10 @@
 #!/bin/sh
-# Install claudeline statusline binary and configure Claude Code settings
+# Install claudeline statusline binary
 # https://github.com/fredrikaverpil/claudeline
 
 set -e
 
-warn() {
- echo "$1" >&2
-}
+. "$HOME/.bash_components/bashrc.d/0_log.sh"
 
 # Skip if Claude Code is not installed
 if ! command -v claude >/dev/null 2>&1; then
@@ -32,18 +30,18 @@ case "$ARCH" in
 esac
 
 URL="https://github.com/fredrikaverpil/claudeline/releases/latest/download/claudeline_${OS}_${ARCH}.tar.gz"
-echo "Installing claudeline for ${OS}/${ARCH}..."
+_info "Installing claudeline for ${OS}/${ARCH}..."
 
 TMP_DIR=$(mktemp -d)
 trap 'rm -rf "$TMP_DIR"' EXIT HUP INT TERM
 
 if ! curl -fsSL "$URL" | tar xz -C "$TMP_DIR" claudeline; then
- warn "[WARN] Failed to download claudeline"
- warn "       Manual: mkdir -p \"$CLAUDE_DIR\" && curl -fsSL \"$URL\" | tar xz -C \"$CLAUDE_DIR\" claudeline && chmod +x \"$BINARY\""
+ _warn "Failed to download claudeline"
+ _warn "Manual: mkdir -p \"$CLAUDE_DIR\" && curl -fsSL \"$URL\" | tar xz -C \"$CLAUDE_DIR\" claudeline && chmod +x \"$BINARY\""
  exit 0
 fi
 
 mv "$TMP_DIR/claudeline" "$BINARY"
 chmod +x "$BINARY"
 
-echo "Installed: $(${BINARY} -version 2>/dev/null || echo 'ok')"
+_info "Installed: $(${BINARY} -version 2>/dev/null || echo 'ok')"
