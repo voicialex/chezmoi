@@ -31,6 +31,7 @@ A chezmoi source state directory managing Bash dotfiles. Files are deployed to `
   - `help-git.sh` / `help-glab.sh` / `help-glm_claude.sh` / `help-net.sh` / `help-nvim.sh`
   - `help-ssh.sh` / `help-tailscale.sh` / `help-terminal.sh` / `help-theme.sh` / `help-tmux.sh` / `help-vim.sh`
 - `prompt_git.sh` — sets PS1 with git branch display (independent color detection via tput)
+- `2_aliases.sh` — global aliases shared on all devices
 - `z_local-loader.sh` — sources `~/.bash_aliases` and `~/.bash_local` (z_ prefix ensures last load order)
 
 ## Managed vs Unmanaged Files
@@ -38,7 +39,7 @@ A chezmoi source state directory managing Bash dotfiles. Files are deployed to `
 | File | Strategy | Behavior |
 |---|---|---|
 | `~/.bashrc` | `dot_bashrc.tmpl` | Always overwritten on apply |
-| `~/.bash_aliases` | `create_dot_bash_aliases` | Created once; existing version never touched |
+| `~/.bash_aliases` | `create_dot_bash_aliases` | Created once as personalization template; existing version never touched |
 | `~/.bash_local` | `.chezmoiignore` | Completely ignored; each machine keeps its own |
 | `~/.ssh/config` | `dot_ssh/modify_config` | Prepends `Include config.d/*.conf` if absent; existing entries preserved |
 | `~/.ssh/config.d/*.conf` | `dot_ssh/config.d/` | Remote host configs (Tailscale, etc.) managed by chezmoi |

@@ -22,7 +22,7 @@ chezmoi 通过文件名前缀和后缀来决定如何处理文件。
 | `dot_claude/CLAUDE.md` | `~/.claude/CLAUDE.md` |
 | `dot_codex/AGENTS.md` | `~/.codex/AGENTS.md` |
 | `dot_bash_components/bashrc.d/` | `~/.bash_components/bashrc.d/` |
-| `create_dot_bash_aliases` | `~/.bash_aliases`（仅首次，已有则跳过） |
+| `create_dot_bash_aliases` | `~/.bash_aliases`（仅首次，已有则跳过；用于个性化补充） |
 
 ### 常用前缀
 
@@ -96,7 +96,8 @@ chezmoi diff    # preview changes
 chezmoi apply   # deploy to $HOME
 ```
 
-- `~/.bash_aliases` — 使用 `create_` 前缀管理，首次 `chezmoi apply` 时创建标准版本，**已有则不覆盖**，用户可自由定制。
+- `~/.bash_components/bashrc.d/*.sh` — 全设备通用配置（包含通用 aliases）。
+- `~/.bash_aliases` — 使用 `create_` 前缀管理，首次 `chezmoi apply` 时创建个性化补充模板，**已有则不覆盖**。
 - `~/.bash_local` — 完全不纳入版本管理（`.chezmoiignore`），每台机器各自独立。
 
 ## Common Commands

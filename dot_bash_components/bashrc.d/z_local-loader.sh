@@ -2,7 +2,7 @@
 # 加载用户本地配置（别名、环境变量等）
 # 位于 bashrc.d/ 最后加载（z_ 前缀保证字母排序末尾）
 
-# 统一加载用户自定义 aliases
+# 加载用户个性化 aliases（作为全局 aliases 的补充）
 if [ -f "$HOME/.bash_aliases" ]; then
   . "$HOME/.bash_aliases"
 fi
