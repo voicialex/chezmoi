@@ -55,6 +55,7 @@ help-tmux() {
     Ctrl+b Ctrl+s                手动保存会话布局
     Ctrl+b Ctrl+r                手动恢复会话布局
     说明: continuum 每 15 分钟自动保存；tmux 启动时自动恢复上次会话
+    清除保存: rm ~/.local/share/tmux/resurrect/*.txt  （插件无删除命令，手动删文件即可）
 
   插件管理 (TPM):
     首次安装 TPM:
