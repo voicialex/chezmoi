@@ -16,6 +16,7 @@ help-tmux() {
     tmux attach -t work          断网后重连恢复
     tmux kill-session -t work    彻底结束会话
     tmux new-session -A -s dev   有 dev 就恢复，没有就创建
+    tmux list-panes -a -F '#{pane_id}'  列出所有窗格 ID
   参数说明:
     -s dev                       把会话名字设成 dev
     -A                           若 dev 已存在则直接附着，避免重复创建报错
