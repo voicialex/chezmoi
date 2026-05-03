@@ -2,11 +2,28 @@
 # 环境诊断工具：greeting 横幅 + chezmoi-doctor 检查命令
 # 位于 bashrc.d/，由 bashrc.tmpl 自动加载
 
-# 版本号（自动取最近 git 提交日期，无 git 时回退）
-_CHEZMOI_VERSION="v$(git -C "$(sed -n 's/^sourceDir *= *"\(.*\)"/\1/p' ~/.config/chezmoi/chezmoi.toml 2>/dev/null)" log -1 --format='%cd' --date=short 2>/dev/null || echo 'dev')"
+# ── 共享检测函数 ──────────────────────────────────────────
+
+# 版本号（延迟计算，首次访问时才执行 git）
+_CHEZMOI_VERSION=""
+_chezmoi_version() {
+  [ -n "$_CHEZMOI_VERSION" ] && return
+  local _src
+  _src="$(chezmoi source-path 2>/dev/null)" || _src=""
+  # Fallback: parse chezmoi config if command unavailable (e.g. during apply)
+  [ -z "$_src" ] && _src="$(sed -n 's/^sourceDir *= *"\(.*\)"/\1/p' ~/.config/chezmoi/chezmoi.toml 2>/dev/null)"
+  _CHEZMOI_VERSION="v$(git -C "$_src" log -1 --format='%cd' --date=short 2>/dev/null || echo 'dev')"
+}
+
+# GNOME Terminal profile ID（greeting 和 theme 共用）
+_gnome_profile_id() {
+  gsettings get org.gnome.Terminal.ProfilesList list 2>/dev/null | tr -d "[]' " | head -1
+}
 
 # ── 版本信息（简要） ──────────────────────────────────────
 _greeting() {
+  _chezmoi_version
+
   local green='\033[01;32m'
   local cyan='\033[01;36m'
   local yellow='\033[01;33m'
@@ -21,7 +38,7 @@ _greeting() {
   # GNOME Terminal 主题名
   if command -v dconf >/dev/null 2>&1 && gsettings list-schemas 2>/dev/null | grep -q "org.gnome.Terminal"; then
     local _pid _tname
-    _pid=$(gsettings get org.gnome.Terminal.ProfilesList list 2>/dev/null | tr -d "[]' " | head -1)
+    _pid=$(_gnome_profile_id)
     if [ -n "$_pid" ]; then
       _tname=$(dconf read "/org/gnome/terminal/legacy/profiles:/:${_pid}/visible-name" 2>/dev/null | tr -d "'")
       [ -n "$_tname" ] && msg="${msg} | ${magenta}${_tname}${reset}"
@@ -99,14 +116,12 @@ chezmoi-doctor() {
 
   echo ""
   echo "Clipboard:"
-  if [ -n "$WAYLAND_DISPLAY" ]; then
-    _chezmoi_check wl-copy
-  elif [ -n "${WSL_DISTRO_NAME:-}" ] || [ -n "${WSL_INTEROP:-}" ]; then
-    _chezmoi_check clip.exe
-  elif [ -n "$DISPLAY" ]; then
-    _chezmoi_check xclip
+  local _cbt
+  _cbt=$(_clipboard_tool)
+  if [ -n "$_cbt" ]; then
+    echo -e "  $ok $_cbt"
   else
-    echo -e "  $no 无剪贴板工具（非桌面环境）"
+    echo -e "  $no 无剪贴板工具"
   fi
 
   echo ""

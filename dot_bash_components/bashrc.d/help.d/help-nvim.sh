@@ -70,15 +70,13 @@ help-nvim() {
     [c                           跳到上一个差异处
     dp                           把当前差异推到另一边（diff put）
     do                           从另一边拉取差异到当前（diff obtain）
-    :diffupdate                  手动刷新差异
 
-  Git Diff（比较当前文件改动）:
-    Space g h d                  对比当前文件 vs 暂存区（垂直分屏）
-    Space g h D                  对比当前文件 vs 上一次 commit（HEAD~1）
-    Space g h p                  浮动窗口预览当前改动块（按 q 关闭）
-    ]h                           跳到下一个改动块
-    [h                           跳到上一个改动块
-    Space g f                    查看当前文件所有 commit 历史（选中预览 diff）
+  Git 改动查看:
+    Space g s                    改动文件列表（= git status）
+    Space g d                    所有改动块 diff 概览（= git diff）
+    ]h / [h                      跳到下一个/上一个改动块
+    Space g h d                  当前文件 vs 暂存区（垂直分屏全文件对比）
+    Space g h D                  当前文件 vs 上一次 commit（垂直分屏）
 
   关闭比较窗口:
     :q                           关闭当前分屏窗格（光标在哪个窗格就关哪个）

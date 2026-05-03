@@ -20,3 +20,14 @@ _fatal() {
  printf "${_TAG} \033[1;31mFATAL\033[0m %s\n" "$1" >&2
  exit 1
 }
+
+# Detect clipboard tool (Wayland → WSL → X11), echo name or empty
+_clipboard_tool() {
+  if [ -n "${WAYLAND_DISPLAY:-}" ] && command -v wl-copy >/dev/null 2>&1; then
+    echo "wl-copy"
+  elif { [ -n "${WSL_DISTRO_NAME:-}" ] || [ -n "${WSL_INTEROP:-}" ]; } && command -v clip.exe >/dev/null 2>&1; then
+    echo "clip.exe"
+  elif [ -n "${DISPLAY:-}" ] && command -v xclip >/dev/null 2>&1; then
+    echo "xclip -sel clip"
+  fi
+}

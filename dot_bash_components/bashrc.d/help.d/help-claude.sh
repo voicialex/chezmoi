@@ -18,7 +18,6 @@ help-claude() {
     /rename <session-name>
     /context 查询当前会话上下文信息
 
-
   Claudeline 状态栏更新:
     rm -f ~/.claude/claudeline && chezmoi apply
 

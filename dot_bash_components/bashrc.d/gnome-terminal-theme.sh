@@ -12,10 +12,10 @@ _theme_available() {
     return 0
 }
 
-# 获取当前 profile path
+# 获取当前 profile path（复用 doctor.sh 的 _gnome_profile_id）
 _theme_profile_path() {
     local _pid
-    _pid=$(gsettings get org.gnome.Terminal.ProfilesList list 2>/dev/null | tr -d "[]' " | head -1)
+    _pid=$(_gnome_profile_id)
     [ -z "$_pid" ] && return 1
     echo "/org/gnome/terminal/legacy/profiles:/:${_pid}/"
 }
