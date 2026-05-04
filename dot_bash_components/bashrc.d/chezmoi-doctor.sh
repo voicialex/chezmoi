@@ -74,6 +74,7 @@ chezmoi-doctor() {
   echo ""
   echo "Editor & Terminal:"
   _chezmoi_check nvim
+  _chezmoi_check lazygit
   _chezmoi_check vim
   _chezmoi_check tmux
 

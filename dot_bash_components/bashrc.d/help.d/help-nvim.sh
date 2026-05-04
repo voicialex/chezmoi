@@ -66,21 +66,22 @@ help-nvim() {
   文件比较（Diff）:
     nvim -d file1 file2          终端启动，垂直分屏对比两个文件
     :vert diffsplit file2        在 nvim 内对比当前文件和 file2
-    ]c                           跳到下一个差异处
-    [c                           跳到上一个差异处
     dp                           把当前差异推到另一边（diff put）
     do                           从另一边拉取差异到当前（diff obtain）
 
   Git 改动查看:
     Space g s                    改动文件列表（= git status）
+    Space g S                    暂存改动列表（= git stash list）
     Space g d                    所有改动块 diff 概览（= git diff）
-    ]h / [h                      跳到下一个/上一个改动块
-    Space g h d                  当前文件 vs 暂存区（垂直分屏全文件对比）
-    Space g h D                  当前文件 vs 上一次 commit（垂直分屏）
+    ]c / [c                      跳到下一个/上一个改动块（编辑时跳 hunk，diff 时跳差异处）
 
-  关闭比较窗口:
-    :q                           关闭当前分屏窗格（光标在哪个窗格就关哪个）
-    Ctrl+w q                     同上，关闭当前窗格
+  Git 左右分屏对比（Diffview，类似 GitLens）:
+    Space g p                    反复按，依次往历史翻：
+                                 第1次=当前 vs HEAD
+                                 第2次=HEAD~1 vs HEAD~2
+                                 第3次=HEAD~2 vs HEAD~3，以此类推
+    Space g n                    往回翻（回到较新版本）
+    :q                           关闭 Diffview（状态自动重置）
 
   文件切换（最常用）:
     Ctrl+^                       当前文件 ↔ 上一个文件（两个文件来回横跳）

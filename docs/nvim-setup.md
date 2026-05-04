@@ -51,6 +51,7 @@ chezmoi 会覆盖以下文件（自定义配置）：
 - `~/.config/nvim/lua/config/keymaps.lua` — nvim 快捷键
 - `~/.config/nvim/lua/plugins/lsp.lua` — LSP 配置
 - `~/.config/nvim/lua/plugins/tmux.lua` — tmux 窗格导航
+- `~/.config/nvim/lua/plugins/diffview.lua` — Git 左右分屏对比（类似 GitLens）
 
 ## 四、安装 tmux 插件（TPM）
 
@@ -72,6 +73,27 @@ bash ~/chezmoi/.chezmoiscripts/tmux/run_once_install-tmux-plugins.sh
 ```bash
 sudo apt install -y git curl unzip gcc make ripgrep fd-find tmux
 ```
+
+### 安装 lazygit（Git 终端界面）
+
+lazygit 是 lazygit 程序（独立程序，不是 nvim 插件）。LazyVim 的 snacks.nvim 通过 `<Space>gg` 调用它。
+
+```bash
+# 自动检测架构（x86_64 / aarch64 通用）
+ARCH=$(uname -m | sed 's/x86_64/x86_64/;s/aarch64/arm64/') && \
+cd /tmp && curl -sL "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_0.61.1_Linux_${ARCH}.tar.gz" | tar xz lazygit && \
+sudo install lazygit /usr/local/bin/
+```
+
+### 安装 Diffview（Git 分屏对比插件）
+
+在 nvim 中安装：
+
+```
+:Lazy sync
+```
+
+diffview 由 chezmoi 部署的 `~/.config/nvim/lua/plugins/diffview.lua` 自动配置。
 
 ## 七、SSH 稳定连接
 
@@ -129,6 +151,14 @@ Host myserver
 
 ### 5) 文件间切换（你最常用）
 
-- `Ctrl-^`：在“当前文件”和“上一个文件”之间一键互切（两个文件来回横跳）
+- `Ctrl-^`：在”当前文件”和”上一个文件”之间一键互切（两个文件来回横跳）
 - `]b`：切到下一个 buffer（多文件前进）
 - `[b`：切到上一个 buffer（多文件后退）
+
+### 6) Git 操作
+
+- `Space g g`：打开 lazygit（需要系统安装 lazygit）
+- `Space g s`：改动文件列表（= git status）
+- `Space g p`：左右分屏对比，反复按依次往历史翻（类似 GitLens）
+- `Space g n`：往回翻（回到较新版本）
+- `]c` / `[c`：跳到下一个/上一个改动块
