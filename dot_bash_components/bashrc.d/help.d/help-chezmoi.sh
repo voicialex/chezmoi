@@ -23,6 +23,12 @@ help-chezmoi() {
   [新机器初始化]
     sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply https://github.com/voicialex/chezmoi.git
 
+  [sourceDir 配置]
+    mkdir -p ~/.config/chezmoi
+    cat > ~/.config/chezmoi/chezmoi.toml << 'EOF'
+    sourceDir = "/path/to/your/chezmoi/repo"
+    EOF
+
   [调试]
     chezmoi source-path                   查看源目录位置
     chezmoi target-path                   查看部署目标路径

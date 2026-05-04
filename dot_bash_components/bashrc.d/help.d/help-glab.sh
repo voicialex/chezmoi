@@ -27,15 +27,13 @@ help-glab() {
     glab mr view <mr_iid>
     glab mr checks <mr_iid>
 
-  当前分支发起合并到 develop:
-    glab mr create --source-branch feature-dev --target-branch develop --fill
-
-  指定标题和描述创建 MR:
+  发起合并到 develop（标题取最近一次提交）:
     glab mr create \
       --source-branch feature-dev \
       --target-branch develop \
-      --title "feat(Guard): [CCAR-9530] Update tracking topic" \
-      --description "Merge feature-dev into develop"
+      --title "$(git log -1 --pretty=%s)" \
+      --description "Merge feature-dev into develop" \
+      --fill
 
   查看/签出 MR:
     glab mr view <mr_iid>
