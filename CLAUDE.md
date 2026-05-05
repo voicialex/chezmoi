@@ -62,6 +62,9 @@ Platform detection: `WSL_DISTRO_NAME`/`WSL_INTEROP` → WSL; `DISPLAY`/`WAYLAND_
 ## Agent Instructions
 
 - `dot_claude/CLAUDE.md` → synced to `~/.claude/CLAUDE.md` (Claude Code instructions)
+- `dot_claude/rules/*.md` → synced to `~/.claude/rules/*.md` (modular global rules)
+  - `english-coach.md` — correct non-native English to help user improve
+  - `commit.md` — commit message format conventions
 - `dot_codex/AGENTS.md` → synced to `~/.codex/AGENTS.md` (Codex instructions)
 
 Both contain the same role/persona configuration with a Linus Torvalds coding philosophy and commit message format: `feat(module): [PRO-10000] <Description>`.

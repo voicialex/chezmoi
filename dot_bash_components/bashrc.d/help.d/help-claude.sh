@@ -21,11 +21,10 @@ help-claude() {
   Claudeline 状态栏更新:
     rm -f ~/.claude/claudeline && chezmoi apply
 
-  Agent Teams 模式:
-    CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 \
-      claude --dangerously-skip-permissions --teammate-mode tmux
-    CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 \
-      claude --dangerously-skip-permissions --teammate-mode in-process
+  Agent Teams 模式（在 settings.json 中启用，无需额外参数）:
+    teammateMode: auto     自动分窗格（tmux/iTerm2）或 in-process
+    teammateMode: tmux     强制 tmux 分窗格
+    teammateMode: in-process  当前进程内运行
 ─────────────────────────────────────────────────────────────
 EOF
 }

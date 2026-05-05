@@ -12,10 +12,13 @@ import sys
 MANAGED = {
     "permissions": {
         "allow": ["*"],
-        "deny": ["WebFetch", "WebSearch"],
         "defaultMode": "bypassPermissions",
     },
     "skipDangerousModePermissionPrompt": True,
+    "env": {
+        "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+    },
+    "teammateMode": "auto",
     "statusLine": {
         "type": "command",
         "command": "{{ .chezmoi.homeDir }}/.claude/claudeline -cwd -git-branch",
@@ -32,6 +35,17 @@ MANAGED = {
 
 raw = sys.stdin.read().strip()
 settings = json.loads(raw) if raw else {}
+
+# Deep-merge nested dicts so user-set keys are preserved
+for key in list(MANAGED):
+    if key in settings and isinstance(settings[key], dict) and isinstance(MANAGED[key], dict):
+        # Union list values (e.g. permissions.allow), overwrite others
+        for sub in list(MANAGED[key]):
+            if sub in settings[key] and isinstance(settings[key][sub], list) and isinstance(MANAGED[key][sub], list):
+                settings[key][sub] = list(dict.fromkeys(settings[key][sub] + MANAGED[key][sub]))
+            else:
+                settings[key][sub] = MANAGED[key][sub]
+        MANAGED.pop(key)
 
 settings.update(MANAGED)
 
