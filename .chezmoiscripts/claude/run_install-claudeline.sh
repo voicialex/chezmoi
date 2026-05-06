@@ -37,7 +37,9 @@ trap 'rm -rf "$TMP_DIR"' EXIT HUP INT TERM
 
 if ! curl -fsSL "$URL" | tar xz -C "$TMP_DIR" claudeline; then
  _warn "Failed to download claudeline"
- _warn "Manual: mkdir -p \"$CLAUDE_DIR\" && curl -fsSL \"$URL\" | tar xz -C \"$CLAUDE_DIR\" claudeline && chmod +x \"$BINARY\""
+ echo "       Install:"
+ echo "         mkdir -p \"$CLAUDE_DIR\" && curl -fsSL \"$URL\" | tar xz -C \"$CLAUDE_DIR\" claudeline && chmod +x \"$BINARY\""
+ echo "       After install: claudeline -version"
  exit 0
 fi
 

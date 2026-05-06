@@ -6,6 +6,8 @@ if command -v lazygit >/dev/null 2>&1; then
     exit 0
 fi
 
+. "$HOME/.bash_components/bashrc.d/0_log.sh"
+
 OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
 ARCH="$(uname -m)"
 DOWNLOAD_BASE="https://github.com/jesseduffield/lazygit/releases/latest/download"
@@ -20,17 +22,14 @@ case "${OS}/${ARCH}" in
         ;;
 esac
 
-echo ""
-echo "[WARN] lazygit not installed"
+_warn "lazygit not installed"
 
 if [ -n "$ASSET" ]; then
-    echo "       Platform: ${OS}/${ARCH}"
     echo "       Install:"
     echo "         1) cd /tmp && curl -sLO ${DOWNLOAD_BASE}/${ASSET}"
     echo "         2) tar xzf ${ASSET} lazygit"
     echo "         3) sudo install lazygit /usr/local/bin/"
 else
-    echo "       Platform: ${OS}/${ARCH} (generic)"
     echo "       Install:"
     echo "         macOS:         brew install lazygit"
     echo "         Arch:          sudo pacman -S --needed lazygit"
@@ -39,4 +38,3 @@ else
 fi
 
 echo "       After install: lazygit --version"
-echo ""

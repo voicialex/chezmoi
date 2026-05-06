@@ -1,29 +1,34 @@
 #!/bin/sh
-# 首次部署时安装 tmux 插件管理器 (TPM) 及所有插件
-# 需要 git 和 tmux
+# Install tmux plugin manager (TPM) and plugins on first deploy.
+# Requires: git, tmux
 
 set -e
 
 command -v tmux >/dev/null 2>&1 || exit 0
 command -v git >/dev/null 2>&1 || exit 0
 
+. "$HOME/.bash_components/bashrc.d/0_log.sh"
+
 TPM_DIR="$HOME/.tmux/plugins/tpm"
 
-# 安装 TPM
+# Install TPM
 if [ ! -d "${TPM_DIR}" ]; then
-    echo "正在安装 TPM (Tmux Plugin Manager)..."
-    git clone -q https://github.com/tmux-plugins/tpm "${TPM_DIR}" || {
-        echo "TPM 安装失败"
+    _info "Installing TPM (Tmux Plugin Manager)..."
+    git clone --progress https://github.com/tmux-plugins/tpm "${TPM_DIR}" || {
+        _error "TPM install failed"
         exit 1
     }
-    echo "TPM 安装完成"
+    _info "TPM installed"
 fi
 
-# 安装缺失的插件（全部已安装时静默跳过）
+# Install missing plugins (silent when all present)
 if [ -x "${TPM_DIR}/bin/install_plugins" ]; then
     output=$("${TPM_DIR}/bin/install_plugins" 2>&1) || true
-    if ! echo "$output" | grep -q "Already installed"; then
+    if echo "$output" | grep -q "Already installed"; then
+        :
+    else
+        _info "Installing tmux plugins..."
         echo "$output"
-        echo "tmux plugins installed"
+        _info "Tmux plugins installed"
     fi
 fi

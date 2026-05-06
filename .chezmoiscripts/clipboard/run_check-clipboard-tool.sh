@@ -8,6 +8,8 @@ command -v tmux >/dev/null 2>&1 || exit 0
 
 if [ -z "$(_clipboard_tool)" ]; then
   _warn "No clipboard tool found — tmux clipboard integration disabled"
-  echo "       Wayland: sudo apt install wl-clipboard"
-  echo "       X11:     sudo apt install xclip"
+  echo "       Install:"
+  echo "         Wayland: sudo apt install wl-clipboard"
+  echo "         X11:     sudo apt install xclip"
+  echo "       After install: source ~/.bashrc"
 fi

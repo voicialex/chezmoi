@@ -2,6 +2,9 @@
 # Check tmux availability after each chezmoi apply.
 
 if ! command -v tmux >/dev/null 2>&1; then
-  echo "[WARN] tmux not installed"
-  echo "       Install: sudo apt install tmux"
+  . "$HOME/.bash_components/bashrc.d/0_log.sh"
+  _warn "tmux not installed"
+  echo "       Install:"
+  echo "         sudo apt install tmux"
+  echo "       After install: source ~/.bashrc && chezmoi apply"
 fi

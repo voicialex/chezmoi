@@ -8,10 +8,12 @@
 _CHEZMOI_VERSION=""
 _chezmoi_version() {
   [ -n "$_CHEZMOI_VERSION" ] && return
-  local _src
+  local _src=""
   _src="$(chezmoi source-path 2>/dev/null)" || _src=""
-  # Fallback: parse chezmoi config if command unavailable (e.g. during apply)
   [ -z "$_src" ] && _src="$(sed -n 's/^sourceDir *= *"\(.*\)"/\1/p' ~/.config/chezmoi/chezmoi.toml 2>/dev/null)"
+  # Fallback: common source directory locations
+  [ -z "$_src" ] || [ ! -d "$_src/.git" ] && _src="$HOME/.local/share/chezmoi"
+  [ ! -d "$_src/.git" ] && _src="$HOME/workspace/software/chezmoi"
   _CHEZMOI_VERSION="v$(git -C "$_src" log -1 --format='%cd' --date=short 2>/dev/null || echo 'dev')"
 }
 
@@ -32,8 +34,9 @@ _greeting() {
   local reset='\033[00m'
 
   local version="${green}chezmoi${reset}-${cyan}${_CHEZMOI_VERSION}${reset}"
+  local platform="${dim}$(uname -m)${reset}"
 
-  local msg="${version}"
+  local msg="${version} | ${platform}"
 
   # GNOME Terminal 主题名
   if command -v dconf >/dev/null 2>&1 && gsettings list-schemas 2>/dev/null | grep -q "org.gnome.Terminal"; then

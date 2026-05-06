@@ -6,6 +6,8 @@ if command -v nvim >/dev/null 2>&1; then
     exit 0
 fi
 
+. "$HOME/.bash_components/bashrc.d/0_log.sh"
+
 OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
 ARCH="$(uname -m)"
 DOWNLOAD_BASE="https://github.com/neovim/neovim/releases/latest/download"
@@ -23,18 +25,15 @@ case "${OS}/${ARCH}" in
         ;;
 esac
 
-echo ""
-echo "[WARN] Neovim (nvim) not installed"
+_warn "Neovim (nvim) not installed"
 
 if [ -n "$ASSET" ]; then
-    echo "       Platform: ${OS}/${ARCH}"
     echo "       Install:"
     echo "         1) curl -LO ${DOWNLOAD_BASE}/${ASSET}"
     echo "         2) tar xzf ${ASSET}"
     echo "         3) sudo mv ${DIR_NAME} /opt/nvim"
     echo "       After install: source ~/.bashrc && chezmoi apply"
 else
-    echo "       Platform: ${OS}/${ARCH} (generic)"
     echo "       Install:"
     echo "         Ubuntu/Debian: sudo apt install -y neovim"
     echo "         Fedora:        sudo dnf install -y neovim"
@@ -43,4 +42,3 @@ else
 fi
 
 echo "       Docs: ~/chezmoi/docs/nvim-setup.md"
-echo ""
