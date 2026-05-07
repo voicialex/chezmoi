@@ -47,7 +47,8 @@ GitHub：`https://github.com/forrestchang/andrej-karpathy-skills`
 示例：
 
 ```text
-请使用 karpathy-guidelines 重构这个函数：
+# claude code cli
+/karpathy-guidelines 重构这个函数：
 先指出 3 个风险，再给最小改动方案，最后给可替换代码。
 ```
 
@@ -87,18 +88,31 @@ GitHub：`https://github.com/obra/superpowers`
 
 使用方法：
 
-1. 给出真实目标，不要只说“帮我写代码”。
-2. 先走 `superpowers:brainstorming` 和 `superpowers:writing-plans`。
-3. 再执行 `superpowers:test-driven-development`、`superpowers:requesting-code-review`。
+典型流程是 **brainstorming → writing-plans → TDD/executing-plans → code-review → finishing**。
+不需要记住全部 skill 名，按下面的步骤走即可：
 
-示例：
+```bash
+# ① 需求澄清（必须第一步）
+/superpowers:brainstorming 我想给 CLI 加一个 --dry-run 选项
 
-```text
-使用 superpowers workflow 帮我实现需求：
-先 brainstorming 明确边界，
-再写 implementation plan，
-最后按 TDD + code review 推进。
+# ② 编写实施计划（brainstorming 完成后）
+/superpowers:writing-plans
+
+# ③ 执行计划（二选一）
+/superpowers:test-driven-development   # 适合有明确输入输出的功能
+/superpowers:executing-plans           # 适合重构/迁移类任务
+
+# ④ 代码评审
+/superpowers:requesting-code-review
+
+# ⑤ 收尾（合并/PR）
+/superpowers:finishing-a-development-branch
 ```
+
+Tips：
+- 每个 skill 会自动接管后续流程，不需要手动传参。
+- 可以跳过中间步骤（比如小改动直接 `/superpowers:test-driven-development`）。
+- 遇到 bug 用 `/superpowers:systematic-debugging` 替代上面的 ③。
 
 <a id=”graphifyclaude-code”></a>
 ### `graphify`
@@ -135,12 +149,11 @@ GitHub：`https://github.com/safishamsi/graphify`
 
 ```bash
 # 需要 Python 3.10+
-python3 --version
-
-# 当前包名是 graphifyy，命令仍为 graphify
 pip install graphifyy
-graphify install
+graphify claude install
 ```
+
+卸载：`graphify claude uninstall`
 
 在 Claude 里作为插件/技能使用：
 
@@ -342,11 +355,10 @@ cp -r /tmp/andrej-karpathy-skills/skills/karpathy-guidelines ~/.codex/skills/
 <a id="superpowerscodex"></a>
 ### `superpowers`
 
-推荐方式（插件市场）：
+推荐方式（Codex 插件市场内直接安装）：
 
-```bash
-/plugins
-# 搜索 superpowers 并选择 Install Plugin
+```text
+在 Codex 中打开插件市场，搜索 superpowers 并安装
 ```
 
 兼容方式（手动）：
@@ -357,15 +369,59 @@ mkdir -p ~/.agents/skills
 ln -s ~/.codex/superpowers/skills ~/.agents/skills/superpowers
 ```
 
+使用方法（Codex 中 `$` 前缀对应 Claude Code 的 `/` 前缀）：
+
+```bash
+# ① 需求澄清
+$superpowers:brainstorming 我想给 CLI 加一个 --dry-run 选项
+
+# ② 编写实施计划
+$superpowers:writing-plans
+
+# ③ 执行（二选一）
+$superpowers:test-driven-development
+$superpowers:executing-plans
+
+# ④ 代码评审
+$superpowers:requesting-code-review
+
+# ⑤ 收尾
+$superpowers:finishing-a-development-branch
+```
+
 <a id="graphifycodex"></a>
 ### `graphify`
 
 ```bash
-python3 --version
 pip install graphifyy
+graphify codex install
 ```
 
-说明：`graphify` 官方当前主要定位 Claude Code skill；在 Codex 场景通常以独立 CLI 运行产物（如 `GRAPH_REPORT.md`、`wiki/`）再供 agent 使用。
+说明：`graphify codex install` 会自动注册 skill 到 `~/.codex/skills/` 并配置 hook。卸载用 `graphify codex uninstall`。
+
+使用方法：
+
+```bash
+# 在 Codex 中调用（对应 Claude Code 的 /graphify）
+$graphify
+
+# 带参数：指定分析范围
+$graphify src/
+
+# 查询已有图谱
+$graphify query "认证模块的入口在哪里"
+```
+
+如果 `$graphify` 未自动注册，手动配置：
+
+```bash
+# 确认 skill 文件存在
+ls ~/.codex/skills/graphify/SKILL.md
+
+# 若不存在，手动创建链接
+mkdir -p ~/.codex/skills/graphify
+graphify codex install   # 重新执行安装
+```
 
 <a id="gitnexuscodex"></a>
 ### `gitnexus`
@@ -382,6 +438,8 @@ codex mcp add gitnexus -- npx -y gitnexus@latest mcp
 ```
 
 使用方法同 Claude Code 章节，常用命令一致（`analyze`、`status`、`wiki` 等）。
+
+在 Codex 中 gitnexus MCP 配置完成后，agent 自动通过 MCP 查询图谱。手动查询可用 `$context`、`$impact` 等（对应 Claude Code 中 agent 自动调用的 MCP tool）。
 
 <a id="clang-lspcodex"></a>
 ### `clang-lsp`

@@ -6,38 +6,36 @@ help-graphify() {
   cat <<'EOF'
 ── Graphify ─────────────────────────────────────────────────
   [安装]
-    pip install graphifyy                    安装（包名 graphifyy，命令 graphify）
-    graphify install                         注册 Claude Code skill
+    pip install graphifyy                    包名 graphifyy，命令 graphify
 
-  [首次构建] （在 Claude Code 内执行）
-    /graphify                                LLM 语义抽取 + AST 解析，生成完整图谱
+  [注册到 AI 助手]（建图后执行一次）
+    graphify claude install                  Claude Code（支持 hook）
+    graphify codex install                   Codex（支持 hook）
+    graphify copilot install                 GitHub Copilot CLI
+    卸载: graphify <platform> uninstall
 
-  [增量更新] （终端执行）
-    graphify update .                        仅重新解析变更文件（无需 LLM，速度快）
-    graphify update . --force                强制覆盖（重构删代码后节点变少时）
+  [过滤文件] 项目根目录创建 .graphifyignore（.gitignore 语法）
+    node_modules/                            排除目录
+    *.generated.py                           排除匹配文件
+    *                                        排除所有，配合 ! 反选：
+    !src/                                      只索引 src/ 目录
+    !src/**
 
-  [查询]
-    graphify query "<问题>"                  BFS 遍历图谱回答问题
+  [构建 & 更新]
+    /graphify                                首次建图（在 AI 助手内）
+    graphify update .                        增量更新（终端，无需 LLM）
+    graphify update . --force                强制全量重建
+
+  [查询 & 分析]
+    graphify query "<问题>"                  BFS 遍历图谱
     graphify query "<问题>" --dfs --budget 3000
-                                              深度优先 + 限制输出 token 数
+    graphify path "A" "B"                    最短路径
+    graphify explain "NodeName"              节点及邻居
 
-  [分析]
-    graphify path "A" "B"                    查两个节点间最短路径
-    graphify explain "NodeName"              解释某节点及其邻居
-
-  [Git Hook 自动重建]
-    graphify hook install                    安装 post-commit/checkout 钩子（自动增量更新）
-    graphify hook uninstall                  卸载钩子
-    graphify hook status                     查看钩子状态
-
-  [监听 & 聚类]
-    graphify watch .                         监听文件变更，自动重建图谱
-    graphify cluster-only .                  重新聚类（不重新解析，只刷新报告）
-
-  [典型流程]
-    1. /graphify                             首次在 Claude Code 中建图
-    2. graphify query "入口在哪"             终端查询
-    3. graphify update .                     代码改动后增量更新
+  [自动化]
+    graphify hook install/uninstall/status   Git 钩子（自动增量更新）
+    graphify watch .                         监听文件变更
+    graphify cluster-only .                  仅重新聚类
 ─────────────────────────────────────────────────────────────
 EOF
 }

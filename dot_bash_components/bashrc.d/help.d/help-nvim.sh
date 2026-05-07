@@ -32,7 +32,13 @@ help-nvim() {
   插件管理:
     :Mason                       管理语言 Server（LSP/格式化/调试）
                                  搜索 → i 安装 → X 卸载
-    :Lazy                        總理插件（更新/清理）
+    :Lazy                        插件管理面板（总览）
+    :Lazy update                 更新所有插件
+    :Lazy clean                  清理未使用插件
+    :Lazy log                    查看插件安装/更新日志
+    :Lazy profile                查看各插件加载耗时
+    :checkhealth                 检查插件健康状态（依赖/版本/配置）
+    :messages                    查看完整启动信息与错误日志
 
   文件与搜索 (前缀 Space):
     Space e                      文件树（neo-tree）
@@ -87,6 +93,12 @@ help-nvim() {
     Ctrl+^                       当前文件 ↔ 上一个文件（两个文件来回横跳）
     ]b                           下一个 buffer（多文件前进）
     [b                           上一个 buffer（多文件后退）
+
+  搜索过滤（排除目录）:
+    项目根目录创建 .ignore 文件，ripgrep/fd 自动读取：
+      echo "graphify-out/" >> .ignore
+    之后 Space / 和 Space Space 都会跳过该目录
+    支持 glob 语法，每行一条规则，和 .gitignore 格式相同
 
   参考:
     ~/chezmoi/docs/nvim-setup.md 安装文档
