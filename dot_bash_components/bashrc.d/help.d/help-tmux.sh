@@ -52,11 +52,12 @@ help-tmux() {
     Ctrl+b w                     列出所有窗口（交互选择切换）
     Ctrl+b &                     关闭当前窗口
 
-  会话恢复 (resurrect + continuum):
+  会话恢复 (resurrect):
     Ctrl+b Ctrl+s                手动保存会话布局
-    Ctrl+b Ctrl+r                手动恢复会话布局
-    说明: continuum 每 15 分钟自动保存；tmux 启动时自动恢复上次会话
-    清除保存: rm ~/.local/share/tmux/resurrect/*.txt  （插件无删除命令，手动删文件即可）
+    Ctrl+b Ctrl+r                手动恢复上次保存的会话
+    说明: 自动保存和自动恢复均已关闭，完全手动控制
+    保存位置: ~/.local/share/tmux/resurrect/
+    清除保存: rm ~/.local/share/tmux/resurrect/*.txt
 
   插件管理 (TPM):
     首次安装 TPM:
