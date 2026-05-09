@@ -5,6 +5,13 @@ _help_desc "copilot" "AI工具" "copilot-api 启动/停止"
 help-copilot() {
   cat <<'EOF'
 ── copilot-api 代理 ─────────────────────────────────────────
+  安装 Node.js 最新版（Ubuntu）:
+    curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+    sudo apt install -y nodejs
+
+  安装（npm）:
+    npm install -g copilot-api
+
   后台启动:
     nohup copilot-api start &> ~/.local/share/copilot-api/server.log &
 

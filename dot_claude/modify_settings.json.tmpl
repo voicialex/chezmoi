@@ -23,6 +23,20 @@ MANAGED = {
         "type": "command",
         "command": "{{ .chezmoi.homeDir }}/.claude/claudeline -cwd -git-branch",
     },
+    "enabledPlugins": {
+        "context7@claude-plugins-official": True,
+        "code-review@claude-plugins-official": True,
+        "superpowers@claude-plugins-official": True,
+        "code-simplifier@claude-plugins-official": True,
+        "claude-md-management@claude-plugins-official": True,
+        "clangd-lsp@claude-plugins-official": True,
+        "claude-code-setup@claude-plugins-official": True,
+        "codex@openai-codex": True,
+        "andrej-karpathy-skills@karpathy-skills": True,
+    },
+    "editorMode": "vim",
+    "alwaysThinkingEnabled": True,
+    "forceLoginMethod": "console",
     "extraKnownMarketplaces": {
         "openai-codex": {
             "source": {"source": "github", "repo": "openai/codex-plugin-cc"}

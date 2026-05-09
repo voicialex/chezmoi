@@ -5,6 +5,10 @@ _help_desc "codex" "AI工具" "Codex 常用命令"
 help-codex() {
   cat <<'EOF'
 ── Codex ───────────────────────────────────────────────────
+  安装 Node.js 最新版（Ubuntu）:
+    curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+    sudo apt install -y nodejs
+
   安装（npm）:
     npm install -g @openai/codex
 

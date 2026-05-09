@@ -1,0 +1,169 @@
+#!/usr/bin/env python3
+"""Merge chezmoi-managed keys into ~/.codex/config.toml.
+
+Reads existing config from stdin, ensures managed keys are present,
+preserves all user-set keys, writes result to stdout.
+Strategy: line-based insert — no TOML parser needed.
+"""
+
+import re
+import sys
+
+content = sys.stdin.read()
+
+# If file is empty/missing, generate the full template
+if not content.strip():
+    sys.stdout.write("""\
+# Codex config (managed keys maintained by chezmoi)
+# Machine-specific items (model_providers, projects) — add manually
+
+model = "o4-mini"
+approval_policy = "never"
+sandbox_mode = "danger-full-access"
+web_search = "live"
+model_verbosity = "low"
+model_reasoning_summary = "concise"
+model_supports_reasoning_summaries = true
+
+[features]
+multi_agent = true
+prevent_idle_sleep = true
+js_repl = true
+shell_snapshot = true
+unified_exec = true
+
+[agents]
+max_threads = 6
+job_max_runtime_seconds = 300
+
+[feedback]
+enabled = false
+
+[notice]
+hide_full_access_warning = true
+
+[tools]
+view_image = true
+
+[tui]
+status_line = ["model-with-reasoning", "current-dir", "model-name", "project-root", "context-used", "five-hour-limit", "weekly-limit", "codex-version", "context-window-size", "used-tokens", "total-input-tokens", "total-output-tokens"]
+
+# === Machine-specific — configure manually ===
+# [model_providers.xxx]
+# base_url = "..."
+# experimental_bearer_token = "..."
+#
+# [projects."/path/to/project"]
+# trust_level = "trusted"
+""")
+    sys.exit(0)
+
+
+# --- Helpers ---
+
+def has_key(text, key):
+    """Check if a top-level key = ... exists (before any [section])."""
+    # Match key at line start, before the first [section] header
+    top = re.split(r'^\[', text, maxsplit=1, flags=re.MULTILINE)[0]
+    return bool(re.search(rf'^{re.escape(key)}\s*=', top, re.MULTILINE))
+
+
+def has_section(text, section):
+    """Check if [section] exists."""
+    return bool(re.search(rf'^\[{re.escape(section)}\]', text, re.MULTILINE))
+
+
+def has_key_in_section(text, section, key):
+    """Check if key exists under [section]."""
+    m = re.search(
+        rf'^\[{re.escape(section)}\]\s*\n(.*?)(?=^\[|\Z)',
+        text, re.MULTILINE | re.DOTALL
+    )
+    if not m:
+        return False
+    return bool(re.search(rf'^{re.escape(key)}\s*=', m.group(1), re.MULTILINE))
+
+
+def insert_before_first_section(text, line):
+    """Insert a line before the first [section] header."""
+    m = re.search(r'^\[', text, re.MULTILINE)
+    if m:
+        return text[:m.start()] + line + '\n' + text[m.start():]
+    return text.rstrip('\n') + '\n' + line + '\n'
+
+
+def append_to_section(text, section, line):
+    """Append a key=value line at the end of a section."""
+    pattern = rf'(^\[{re.escape(section)}\]\s*\n)(.*?)(?=^\[|\Z)'
+    m = re.search(pattern, text, re.MULTILINE | re.DOTALL)
+    if m:
+        end = m.end(2)
+        body = m.group(2)
+        if body and not body.endswith('\n'):
+            line = '\n' + line
+        return text[:end] + line + '\n' + text[end:]
+    # Section doesn't exist yet — append it
+    return text.rstrip('\n') + f'\n\n[{section}]\n{line}\n'
+
+
+def ensure_section(text, section):
+    """Ensure [section] exists; add it if missing."""
+    if not has_section(text, section):
+        text = text.rstrip('\n') + f'\n\n[{section}]\n'
+    return text
+
+
+# --- Managed top-level keys (only added if missing) ---
+TOP_KEYS = {
+    "approval_policy": '"never"',
+    "sandbox_mode": '"danger-full-access"',
+    "web_search": '"live"',
+    "model_verbosity": '"low"',
+    "model_reasoning_summary": '"concise"',
+    "model_supports_reasoning_summaries": "true",
+}
+
+# --- Managed section keys (only added if missing) ---
+SECTION_KEYS = {
+    "features": {
+        "multi_agent": "true",
+        "prevent_idle_sleep": "true",
+        "js_repl": "true",
+        "shell_snapshot": "true",
+        "unified_exec": "true",
+    },
+    "agents": {
+        "max_threads": "6",
+        "job_max_runtime_seconds": "300",
+    },
+    "feedback": {
+        "enabled": "false",
+    },
+    "notice": {
+        "hide_full_access_warning": "true",
+    },
+    "tools": {
+        "view_image": "true",
+    },
+    "tui": {
+        "status_line": '["model-with-reasoning", "current-dir", "model-name", "project-root", "context-used", "five-hour-limit", "weekly-limit", "codex-version", "context-window-size", "used-tokens", "total-input-tokens", "total-output-tokens"]',
+    },
+}
+
+# Apply top-level keys
+for key, val in TOP_KEYS.items():
+    if not has_key(content, key):
+        content = insert_before_first_section(content, f'{key} = {val}')
+
+# Apply section keys
+for section, keys in SECTION_KEYS.items():
+    content = ensure_section(content, section)
+    for key, val in keys.items():
+        if not has_key_in_section(content, section, key):
+            content = append_to_section(content, section, f'{key} = {val}')
+
+# Normalize trailing newline
+if not content.endswith('\n'):
+    content += '\n'
+
+sys.stdout.write(content)

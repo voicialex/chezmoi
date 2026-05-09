@@ -44,7 +44,8 @@ A chezmoi source state directory managing Bash dotfiles. Files are deployed to `
 | `~/.ssh/config` | `dot_ssh/modify_config` | Prepends `Include config.d/*.conf` if absent; existing entries preserved |
 | `~/.ssh/config.d/*.conf` | `dot_ssh/config.d/` | Remote host configs (Tailscale, etc.) managed by chezmoi |
 | `~/.claude/claudeline` | `.chezmoiscripts/claude/run_install-claudeline.sh` | Checks every apply: downloads binary + patches settings.json if claude installed but claudeline missing |
-| `~/.claude/settings.json` | `.chezmoiscripts/claude/run_install-claudeline.sh` | statusLine auto-injected by jq if absent |
+| `~/.claude/settings.json` | `dot_claude/modify_settings.json.tmpl` | Deep-merges managed keys (plugins, permissions, statusLine, etc.); user-set keys preserved |
+| `~/.codex/config.toml` | `dot_codex/modify_config.toml` | Ensures managed keys present (features, agents, tui, etc.); user-set keys preserved; add model_providers/projects manually |
 | `~/.tmux.conf` | `dot_tmux.conf` | Auto-detects clipboard tool: Wayland(`wl-copy`) → WSL(`clip.exe`) → X11(`xclip`); shows install hint if TPM missing |
 | `~/.tmux/plugins/tpm` | `.chezmoiscripts/tmux/run_once_install-tmux-plugins.sh` | Installs TPM + all plugins on first apply |
 | `chezmoi apply` output | `.chezmoiscripts/chezmoi-info/run_00_show-apply-greeting.sh` | Prints `_greeting()` version banner at apply start |
