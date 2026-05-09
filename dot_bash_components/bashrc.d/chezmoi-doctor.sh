@@ -22,6 +22,59 @@ _gnome_profile_id() {
   gsettings get org.gnome.Terminal.ProfilesList list 2>/dev/null | tr -d "[]' " | head -1
 }
 
+# GPU 信息（多显卡 + nvidia-smi fallback）
+_gpu_info() {
+  local _gpus _count _i _total _line _name _mem
+
+  # 优先 lspci（显示所有显卡包括集显）
+  _gpus=$(lspci 2>/dev/null | grep -iE 'vga|3d' | sed 's/.*: //')
+  if [ -n "$_gpus" ]; then
+    _count=$(printf '%s\n' "$_gpus" | wc -l)
+    if [ "$_count" -le 1 ]; then
+      echo "  GPU: ${_gpus}"
+    else
+      echo "  GPUs:"
+      _total=$_count
+      _i=0
+      while IFS= read -r _line; do
+        _i=$((_i + 1))
+        if [ "$_i" -eq "$_total" ]; then
+          echo "  └─ ${_line}"
+        else
+          echo "  ├─ ${_line}"
+        fi
+      done <<< "$_gpus"
+    fi
+    return
+  fi
+
+  # Fallback: nvidia-smi（WSL 或无 lspci）
+  command -v nvidia-smi >/dev/null 2>&1 || return
+  _gpus=$(nvidia-smi --query-gpu=name,memory.total --format=csv,noheader 2>/dev/null) || return
+  [ -z "$_gpus" ] && return
+
+  _count=$(printf '%s\n' "$_gpus" | wc -l)
+  if [ "$_count" -le 1 ]; then
+    _name=$(printf '%s' "$_gpus" | cut -d',' -f1 | sed 's/^ *//')
+    _mem=$(printf '%s' "$_gpus" | cut -d',' -f2 | sed 's/^ *//')
+    echo "  GPU: ${_name} (${_mem})"
+  else
+    echo "  GPUs:"
+    _total=$_count
+    _i=0
+    while IFS=',' read -r _name _mem; do
+      _i=$((_i + 1))
+      _name=$(echo "$_name" | sed 's/^ *//')
+      _mem=$(echo "$_mem" | sed 's/^ *//')
+      if [ "$_i" -eq "$_total" ]; then
+        echo "  └─ ${_name} (${_mem})"
+      else
+        echo "  ├─ ${_name} (${_mem})"
+      fi
+    done <<< "$_gpus"
+  fi
+}
+
 # ── 版本信息（简要） ──────────────────────────────────────
 _greeting() {
   _chezmoi_version
@@ -62,17 +115,65 @@ _chezmoi_check() {
   fi
 }
 
+# 系统硬件信息
+_system_info() {
+  local _val
+
+  # OS
+  if [ -f /etc/os-release ]; then
+    local _os_name _os_ver
+    _os_name=$(sed -n 's/^NAME="\(.*\)"/\1/p' /etc/os-release)
+    _os_ver=$(sed -n 's/^VERSION="\(.*\)"/\1/p' /etc/os-release)
+    echo "  OS: ${_os_name} ${_os_ver} ($(uname -m))"
+  else
+    echo "  OS: $(uname -s) $(uname -m)"
+  fi
+  [ -n "${WSL_DISTRO_NAME:-}" ] && echo "  WSL: ${WSL_DISTRO_NAME}"
+
+  # CPU
+  _val=$(lscpu 2>/dev/null | sed -n 's/^Model name:\s*//p')
+  [ -n "$_val" ] && echo "  CPU: ${_val} ($(lscpu 2>/dev/null | sed -n 's/^CPU(s):\s*//p') threads)"
+
+  # GPU
+  _gpu_info
+
+  # Memory
+  _val=$(free -h 2>/dev/null | awk '/^Mem:/{print $2}')
+  [ -n "$_val" ] && echo "  Memory: ${_val} ($(free -h 2>/dev/null | awk '/^Mem:/{print $7}') available)"
+}
+
+# Tmux 插件列表
+_tmux_plugins() {
+  if ! command -v tmux >/dev/null 2>&1; then return; fi
+  echo "    Tmux Plugins:"
+  if [ -d ~/.tmux/plugins/tpm ]; then
+    echo -e "      $ok TPM (plugin manager)"
+    local _p _pname
+    for _p in $(find ~/.tmux/plugins -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort); do
+      _pname=$(basename "$_p")
+      [ "$_pname" = "tpm" ] && continue
+      echo -e "        $ok $_pname"
+    done
+  else
+    echo -e "      $no TPM 未安装 (运行 help-tmux 查看安装方法)"
+  fi
+}
+
 chezmoi-doctor() {
   local ok='\033[01;32m✓\033[00m'
   local no='\033[01;31m✗\033[00m'
 
   _greeting
   echo ""
+
+  echo "System:"
+  _system_info
+
+  echo ""
   echo "Core tools:"
   _chezmoi_check git
   _chezmoi_check chezmoi
   _chezmoi_check curl
-  _chezmoi_check jq
 
   echo ""
   echo "Editor & Terminal:"
@@ -80,53 +181,47 @@ chezmoi-doctor() {
   _chezmoi_check lazygit
   _chezmoi_check vim
   _chezmoi_check tmux
+  _tmux_plugins
 
-  # Tmux 插件状态（仅 tmux 存在时检查）
-  if command -v tmux >/dev/null 2>&1; then
-    echo ""
-    echo "Tmux Plugins:"
-    if [ -d ~/.tmux/plugins/tpm ]; then
-      echo -e "  $ok TPM (plugin manager)"
-      local _plug_count
-      _plug_count=$(find ~/.tmux/plugins -mindepth 1 -maxdepth 1 -type d 2>/dev/null | wc -l)
-      echo -e "  $ok 已安装 ${_plug_count} 个插件"
-    else
-      echo -e "  $no TPM 未安装 (运行 help-tmux 查看安装方法)"
-    fi
+  local _cbt
+  _cbt=$(_clipboard_tool)
+  if [ -n "$_cbt" ]; then
+    echo -e "  $ok Clipboard: $_cbt (tmux + nvim)"
+  else
+    echo -e "  $no Clipboard: 无剪贴板工具 (tmux + nvim)"
   fi
 
   echo ""
   echo "AI Tools:"
   _chezmoi_check claude
+  if command -v claude >/dev/null 2>&1; then
+    if command -v claudeline >/dev/null 2>&1; then
+      echo -e "    $ok claudeline"
+    else
+      echo -e "    $no claudeline"
+    fi
+  fi
   _chezmoi_check codex
   _chezmoi_check copilot-api
+  _chezmoi_check ollama
 
   echo ""
-  echo "AI Plugins:"
-  _chezmoi_check claudeline
+  echo "Dev Tools:"
+  _chezmoi_check cmake
+  _chezmoi_check conan
+  _chezmoi_check docker
 
   echo ""
   echo "Languages & Runtimes:"
   _chezmoi_check go
   _chezmoi_check bun
   _chezmoi_check node
-  _chezmoi_check conan
 
   echo ""
   echo "Network & Remote:"
   _chezmoi_check tailscale
   _chezmoi_check glab
   _chezmoi_check ssh
-
-  echo ""
-  echo "Clipboard:"
-  local _cbt
-  _cbt=$(_clipboard_tool)
-  if [ -n "$_cbt" ]; then
-    echo -e "  $ok $_cbt"
-  else
-    echo -e "  $no 无剪贴板工具"
-  fi
 
   echo ""
   echo "Config files:"
