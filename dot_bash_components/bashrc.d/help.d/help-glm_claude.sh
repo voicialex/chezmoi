@@ -15,20 +15,16 @@ help-glm_claude() {
     按界面提示完成工具安装、套餐配置与 MCP 管理
 
   手动配置:
-    编辑 `~/.claude/settings.json`:
+    编辑 `~/.claude/settings.json` 的 env:
     {
-      "env": {
-        "ANTHROPIC_AUTH_TOKEN": "your_zhipu_api_key",
-        "ANTHROPIC_BASE_URL": "https://open.bigmodel.cn/api/anthropic",
-        "API_TIMEOUT_MS": "3000000",
-        "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": 1
-      }
+      "ANTHROPIC_AUTH_TOKEN": "your_zhipu_api_key",
+      "ANTHROPIC_BASE_URL": "https://open.bigmodel.cn/api/anthropic",
+      "API_TIMEOUT_MS": "3000000",
+      "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
     }
 
-    再编辑或新增 `~/.claude.json`:
-    {
-      "hasCompletedOnboarding": true
-    }
+    注: hasCompletedOnboarding 由 chezmoi apply 自动设置，无需手动编辑。
+    注: GLM 和 copilot-api 后端互斥，同一时间只能用一个 ANTHROPIC_BASE_URL。
 ─────────────────────────────────────────────────────────────
 EOF
 }

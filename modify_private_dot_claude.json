@@ -1,0 +1,24 @@
+#!/usr/bin/env python3
+"""Ensure ~/.claude.json has hasCompletedOnboarding=true.
+
+Reads existing content from stdin, preserves user keys, writes JSON to stdout.
+"""
+
+import json
+import sys
+
+raw = sys.stdin.read().strip()
+
+if not raw:
+    config = {}
+else:
+    try:
+        parsed = json.loads(raw)
+        config = parsed if isinstance(parsed, dict) else {}
+    except json.JSONDecodeError:
+        config = {}
+
+config["hasCompletedOnboarding"] = True
+
+json.dump(config, sys.stdout, indent=2, ensure_ascii=False)
+sys.stdout.write("\n")
