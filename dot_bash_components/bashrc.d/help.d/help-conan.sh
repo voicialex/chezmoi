@@ -41,7 +41,21 @@ help-conan() {
       -o <name>:<option2>=<value2> \
       --update
 
-  [6) conan install 常用功能]
+  [6) 依赖调查 / 冲突分析]
+    # 生成依赖关系 HTML 图（在浏览器中直观查看）
+    conan info . --graph=deps.html
+    # 纯文本依赖树
+    conan info .
+    # 只看某个包的依赖树
+    conan info <name>/<version>@<user>/<channel>
+    # 查看谁依赖了某个包（排查 override 冲突）
+    conan info . | grep -B5 '<pkg_name>'
+    # 典型场景：protobuf 版本被 override
+    #   WARN: A overridden by B to protobuf/x.x.x.102
+    #   → 用 conan info . 找到完整依赖链
+    #   → 确认哪个包强制 override、是否需要对齐版本
+
+  [7) conan install 常用功能]
     # 基础安装（缺什么补什么）
       conan install . --build=missing
     # 指定 profile / build_type

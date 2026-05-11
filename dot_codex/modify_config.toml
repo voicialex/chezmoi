@@ -15,16 +15,45 @@ content = sys.stdin.read()
 if not content.strip():
     sys.stdout.write("""\
 # Codex config (managed keys maintained by chezmoi)
-# Machine-specific items (model_providers, projects) — add manually
+# Machine-specific items (provider secrets, projects) — add manually
 
-model = "o4-mini"
+# Core runtime
+# Primary model for most sessions.
+model = "gpt-5.3-codex"
+# Reasoning effort: minimal | low | medium | high | xhigh.
+# Keep "medium" as a balanced default.
+model_reasoning_effort = "medium"
+# Tone/style: none | friendly | pragmatic.
+personality = "none"
+
+# Execution guardrails.
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
+
+# Search and response style.
 web_search = "live"
 model_verbosity = "low"
 model_reasoning_summary = "concise"
 model_supports_reasoning_summaries = true
 
+# Provider routing (root keys must stay before any [table]).
+# Relationship:
+# - model_provider selects a provider id.
+# - [model_providers.<provider-name>] defines endpoint/auth for that id.
+# Keep <provider-name> exactly the same in both places.
+# model_provider = "<provider-name>"
+#
+# [model_providers.<provider-name>]
+# name = "<Provider Display Name>"
+# base_url = "https://<your-azure-endpoint>/openai/v1"
+# experimental_bearer_token = "<token>"
+# wire_api = "responses"
+# support_websockets = false
+# request_max_retries = 100
+# stream_max_retries = 300
+# stream_idle_timeout_ms = 600000
+
+# Runtime feature flags.
 [features]
 multi_agent = true
 prevent_idle_sleep = true
@@ -32,28 +61,32 @@ js_repl = true
 shell_snapshot = true
 unified_exec = true
 
+# Multi-agent concurrency controls.
 [agents]
 max_threads = 6
 job_max_runtime_seconds = 300
 
+# Disable telemetry feedback by default.
 [feedback]
 enabled = false
 
+# Reduce repetitive warning popups.
 [notice]
 hide_full_access_warning = true
 
+[notice.model_migrations]
+"gpt-5.3-codex" = "gpt-5.4"
+
+# Allow reading local images in chat.
 [tools]
 view_image = true
 
+# Status line composition in TUI.
 [tui]
 status_line = ["model-with-reasoning", "current-dir", "model-name", "project-root", "context-used", "five-hour-limit", "weekly-limit", "codex-version", "context-window-size", "used-tokens", "total-input-tokens", "total-output-tokens"]
 
-# === Machine-specific — configure manually ===
-# [model_providers.xxx]
-# base_url = "..."
-# experimental_bearer_token = "..."
-#
-# [projects."/path/to/project"]
+# === Optional: machine-specific trusted projects ===
+# [projects."/abs/path/to/project"]
 # trust_level = "trusted"
 """)
     sys.exit(0)
@@ -82,6 +115,12 @@ def has_key_in_section(text, section, key):
     if not m:
         return False
     return bool(re.search(rf'^{re.escape(key)}\s*=', m.group(1), re.MULTILINE))
+
+
+def detect_first_model_provider(text):
+    """Find first [model_providers.<name>] section name."""
+    m = re.search(r'^\[model_providers\.([^\]]+)\]', text, re.MULTILINE)
+    return m.group(1).strip() if m else None
 
 
 def insert_before_first_section(text, line):
@@ -115,6 +154,9 @@ def ensure_section(text, section):
 
 # --- Managed top-level keys (only added if missing) ---
 TOP_KEYS = {
+    "model": '"gpt-5.3-codex"',
+    "model_reasoning_effort": '"medium"',
+    "personality": '"none"',
     "approval_policy": '"never"',
     "sandbox_mode": '"danger-full-access"',
     "web_search": '"live"',
@@ -154,6 +196,14 @@ SECTION_KEYS = {
 for key, val in TOP_KEYS.items():
     if not has_key(content, key):
         content = insert_before_first_section(content, f'{key} = {val}')
+
+# If user defines model_providers.* but forgot model_provider, auto-wire it.
+if not has_key(content, "model_provider"):
+    provider_name = detect_first_model_provider(content)
+    if provider_name:
+        content = insert_before_first_section(
+            content, f'model_provider = "{provider_name}"'
+        )
 
 # Apply section keys
 for section, keys in SECTION_KEYS.items():

@@ -4,3 +4,7 @@
 *.tgz
 *.tar.xz
 *.tar.bz2
+
+# Python bytecode/cache
+__pycache__/
+*.py[cod]
