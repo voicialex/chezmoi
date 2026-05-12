@@ -47,6 +47,13 @@ help-cmds() {
     killall -l                   列出所有可用信号名
     killall -SIGHUP nginx        发送 SIGHUP 信号（常用于重载配置）
 
+  [remote-sync]    文件夹同步（rsync over SSH，自动读取 .gitignore）
+    remote-sync ~/Docs/ user@ip:~/Docs/       推：本地 → 远程
+    remote-sync user@ip:~/Docs/ ~/Docs/       拉：远程 → 本地
+    remote-sync -n ...                         -n 预演（不实际执行）
+    remote-sync --delete ...                   --delete 删除目标多出的文件（镜像同步）
+    说明: 自动解析源目录 .gitignore，跳过忽略的文件（支持 ! 否定规则）
+
   [安装]
     sudo apt install ripgrep duf btop
 ─────────────────────────────────────────────────────────────
