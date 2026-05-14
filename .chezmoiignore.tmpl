@@ -35,6 +35,15 @@ dot_config/nvim/**
 .config/nvim/**
 {{- end }}
 
+# 没有 Ghostty 可执行文件，或非 Linux 系统，不部署其配置目录
+# （macOS 的 Ghostty 使用 ~/Library/Application Support/... 路径，此处不处理）
+{{- if or (ne .chezmoi.os "linux") (not (lookPath "ghostty")) }}
+dot_config/ghostty
+dot_config/ghostty/**
+.config/ghostty
+.config/ghostty/**
+{{- end }}
+
 # 源目录中的 AI 指令和文档文件，不部署到 $HOME
 .gitignore
 CLAUDE.md

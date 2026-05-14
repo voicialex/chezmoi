@@ -1,0 +1,23 @@
+# Ghostty — chezmoi 管理。本机覆盖写在同目录 config.local.ghostty（首次 apply 会生成空模板）。
+# 安装、默认终端、分屏快捷键：仓库内 docs/ghostty-setup.md
+
+# 相对路径，Ghostty 自动相对于配置目录解析；前缀 ? 表示文件不存在时静默跳过
+config-file = "?config.local.ghostty"
+
+# 外观
+theme = TokyoNight
+font-size = 12
+
+# 与 shell 集成、选择即复制
+shell-integration = detect
+copy-on-select = true
+
+# 分屏与关闭
+unfocused-split-opacity = 0.75
+confirm-close-surface = true
+
+{{ if eq .chezmoi.os "linux" -}}
+# GTK / Linux 专属
+gtk-titlebar = true
+clipboard-paste-protection = true
+{{ end -}}

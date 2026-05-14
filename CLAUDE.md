@@ -22,14 +22,12 @@ A chezmoi source state directory managing Bash dotfiles. Files are deployed to `
 ## Architecture
 
 `dot_bashrc.tmpl` is the main entry point. It sources all `~/.bash_components/bashrc.d/*.sh` in alphabetical order:
+- `0_log.sh` — shared log utilities (`_info`, `_warn`, `_error`, `_fatal`, `_clipboard_tool`); sourceable by chezmoi scripts via `$HOME/.bash_components/bashrc.d/0_log.sh`
 - `0_set_path.sh` — adds common tool paths (nvim, bun, go, etc.) if they exist
 - `1_help-dispatcher.sh` — `help` dispatcher + loads `help.d/*.sh` topic files via `_help_desc` registration
 - `chezmoi-doctor.sh` — `_greeting()` version banner + `chezmoi-doctor` diagnostic command
 - `gnome-terminal-theme.sh` — GNOME Terminal theme config
-- `help.d/` — help topic subdirectory (sourced by `1_help-dispatcher.sh`), one file per topic
-  - `help-chezmoi.sh` / `help-claude.sh` / `help-codex.sh` / `help-conan.sh` / `help-copilot.sh`
-  - `help-git.sh` / `help-glab.sh` / `help-glm_claude.sh` / `help-net.sh` / `help-nvim.sh`
-  - `help-ssh.sh` / `help-tailscale.sh` / `help-terminal.sh` / `help-theme.sh` / `help-tmux.sh` / `help-vim.sh`
+- `help.d/` — one file per topic (`help-<name>.sh`), sourced by `1_help-dispatcher.sh`; add new topics by creating a file and calling `_help_desc`
 - `prompt_git.sh` — sets PS1 with git branch display (independent color detection via tput)
 - `2_aliases.sh` — global aliases shared on all devices
 - `z_local-loader.sh` — sources `~/.bash_aliases` and `~/.bash_local` (z_ prefix ensures last load order)
@@ -38,6 +36,9 @@ A chezmoi source state directory managing Bash dotfiles. Files are deployed to `
 
 | File | Strategy | Behavior |
 |---|---|---|
+| `~/.claude.json` | `modify_private_dot_claude.json` | Python script; ensures `hasCompletedOnboarding=true`; preserves user keys |
+| `~/.gitconfig` | `modify_dot_gitconfig` | Ensures `[include]` of `~/.gitconfig.d/*.conf`; user settings preserved |
+| `~/.gitconfig.d/*.conf` | `dot_gitconfig.d/` | Modular git config (core, alias); `create_user.conf` for per-machine identity |
 | `~/.bashrc` | `dot_bashrc.tmpl` | Always overwritten on apply |
 | `~/.bash_aliases` | `create_dot_bash_aliases` | Created once as personalization template; existing version never touched |
 | `~/.bash_local` | `.chezmoiignore` | Completely ignored; each machine keeps its own |
@@ -48,6 +49,8 @@ A chezmoi source state directory managing Bash dotfiles. Files are deployed to `
 | `~/.codex/config.toml` | `dot_codex/modify_config.toml` | Ensures managed keys present (features, agents, tui, etc.); user-set keys preserved; add model_providers/projects manually |
 | `~/.tmux.conf` | `dot_tmux.conf` | Auto-detects clipboard tool: Wayland(`wl-copy`) → WSL(`clip.exe`) → X11(`xclip`); shows install hint if TPM missing |
 | `~/.tmux/plugins/tpm` | `.chezmoiscripts/tmux/run_once_install-tmux-plugins.sh` | Installs TPM + all plugins on first apply |
+| `~/.config/ghostty/config.ghostty` | `dot_config/ghostty/config.ghostty.tmpl` | Common Ghostty options (Linux only); GTK options conditional on OS; `create_config.local.ghostty` supplies per-machine overrides |
+| editor keybindings | `.chezmoiscripts/editor/run_sync-editor-keybindings.sh` | Syncs `dot_config/editor-keybindings/` to VS Code and Cursor keybindings paths |
 | `chezmoi apply` output | `.chezmoiscripts/chezmoi-info/run_00_show-apply-greeting.sh` | Prints `_greeting()` version banner at apply start |
 
 ## Conditional Deployment
@@ -57,6 +60,7 @@ A chezmoi source state directory managing Bash dotfiles. Files are deployed to `
 - **No `claude` binary**: skips `dot_claude/` and claudeline install script
 - **No `codex` binary**: skips `dot_codex/`
 - **No `nvim` binary**: skips `dot_config/nvim/`
+- **No `ghostty` binary**: skips `dot_config/ghostty/`
 
 Platform detection: `WSL_DISTRO_NAME`/`WSL_INTEROP` → WSL; `DISPLAY`/`WAYLAND_DISPLAY` → desktop.
 
@@ -66,13 +70,14 @@ Platform detection: `WSL_DISTRO_NAME`/`WSL_INTEROP` → WSL; `DISPLAY`/`WAYLAND_
 - `dot_claude/rules/*.md` → synced to `~/.claude/rules/*.md` (modular global rules)
   - `english-coach.md` — correct non-native English to help user improve
   - `commit.md` — commit message format conventions
+  - `symlink_obsidian.md.tmpl` — symlinks Obsidian vault rules (conditional on vault existence)
 - `dot_codex/AGENTS.md` → synced to `~/.codex/AGENTS.md` (Codex instructions)
 
 Both contain the same role/persona configuration with a Linus Torvalds coding philosophy and commit message format: `feat(module): [PRO-10000] <Description>`.
 
 ## Version
 
-Version is embedded in `doctor.sh` `_greeting()` function: `vYYYY.MM.DD`. Update it when making changes.
+Version is embedded in `chezmoi-doctor.sh` `_greeting()` function: `vYYYY.MM.DD`. Update it when making changes.
 
 ## Key Commands
 
@@ -85,9 +90,4 @@ chezmoi status                # show changed files
 chezmoi source-path           # verify source directory location
 ```
 
-## Editing Workflow
-
-1. Edit files directly in this repo (the chezmoi source directory)
-2. Run `chezmoi diff` to preview what will change
-3. Run `chezmoi apply` to deploy to `$HOME`
-4. Never edit the deployed `~/.bashrc` directly — changes will be overwritten on next apply
+**Always edit files in this repo (the source directory), never the deployed `~/` copies** — `chezmoi apply` overwrites them.

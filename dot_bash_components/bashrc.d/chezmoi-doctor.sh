@@ -195,7 +195,7 @@ chezmoi-doctor() {
   echo "AI Tools:"
   _chezmoi_check claude
   if command -v claude >/dev/null 2>&1; then
-    if command -v claudeline >/dev/null 2>&1; then
+    if [[ -x "${HOME}/.claude/claudeline" ]]; then
       echo -e "    $ok claudeline"
     else
       echo -e "    $no claudeline"
