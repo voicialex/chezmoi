@@ -45,7 +45,8 @@ help-copilot() {
   /etc/hosts 需要添加（屏蔽直连 Anthropic）:
     127.0.0.1 api.anthropic.com
     127.0.0.1 statsig.anthropic.com
-  chezmoi apply 会自动检查并提示缺失的条目。
+  chezmoi apply 会尝试自动同步这些条目（需 sudo 权限）。
+  如未自动写入，可手动执行: chezmoi-hosts-sync
 
 ── Copilot CLI ──────────────────────────────────────────────
   启动（允许所有工具）:

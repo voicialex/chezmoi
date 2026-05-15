@@ -51,6 +51,8 @@ A chezmoi source state directory managing Bash dotfiles. Files are deployed to `
 | `~/.tmux/plugins/tpm` | `.chezmoiscripts/tmux/run_once_install-tmux-plugins.sh` | Installs TPM + all plugins on first apply |
 | `~/.config/ghostty/config.ghostty` | `dot_config/ghostty/config.ghostty.tmpl` | Common Ghostty options (Linux only); GTK options conditional on OS; `create_config.local.ghostty` supplies per-machine overrides |
 | editor keybindings | `.chezmoiscripts/editor/run_sync-editor-keybindings.sh` | Syncs `dot_config/editor-keybindings/` to VS Code and Cursor keybindings paths |
+| `/etc/hosts` | `.chezmoiscripts/hosts/run_sync-hosts.sh` | Merges `~/.config/hosts.d/*.conf` into `/etc/hosts` via marker block; idempotent; content outside markers untouched |
+| `~/.config/hosts.d/*.conf` | `dot_config/hosts.d/` | Host entry fragments (copilot-proxy, homelab, etc.); naming mirrors `ssh/config.d/` convention |
 | `chezmoi apply` output | `.chezmoiscripts/chezmoi-info/run_00_show-apply-greeting.sh` | Prints `_greeting()` version banner at apply start |
 
 ## Conditional Deployment
