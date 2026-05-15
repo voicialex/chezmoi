@@ -54,6 +54,13 @@ help-cmds() {
     remote-sync --delete ...                   --delete 删除目标多出的文件（镜像同步）
     说明: 自动解析源目录 .gitignore，跳过忽略的文件（支持 ! 否定规则）
 
+  [GPU 模式切换]   NVIDIA / 省电模式（双显卡笔记本）
+    prime-select query               查看当前模式
+    sudo prime-select nvidia         切换到 NVIDIA（外接屏需要）
+    sudo prime-select on-demand      切换到省电模式（仅用核显）
+    说明: 切换后需要 sudo reboot 重启生效
+          HDMI/DP 外接屏物理接在 NVIDIA 上，必须用 nvidia 模式才能输出
+
   [安装]
     sudo apt install ripgrep duf btop
 ─────────────────────────────────────────────────────────────
