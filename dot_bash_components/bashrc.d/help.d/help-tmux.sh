@@ -86,11 +86,13 @@ help-tmux() {
     ── 系统剪贴板粘贴 ──
     Ctrl+Shift+v                 粘贴系统剪贴板内容（在任意应用可用）
 
-    ── 剪贴板工具（自动检测）──
-    Wayland:  wl-copy            安装: sudo apt install wl-clipboard
-    X11:      xclip              安装: sudo apt install xclip
-    WSL:      clip.exe           系统自带，无需安装
-    未安装时: 退回 tmux 内部缓冲区（Ctrl+b ] 仍可粘贴）
+    ── 剪贴板策略（双层）──
+    OSC 52:   终端直接写系统剪贴板（Ghostty/iTerm2/Windows Terminal 等）
+    兜底工具: GNOME Terminal 等不支持 OSC 52 时自动启用 copy-pipe
+      Wayland:  wl-copy          安装: sudo apt install wl-clipboard
+      X11:      xclip            安装: sudo apt install xclip
+      WSL:      powershell.exe   系统自带（UTF-8 安全）
+    均未命中: 退回 tmux 内部缓冲区（Ctrl+b ] 仍可粘贴）
 
   配置文件:
     ~/.tmux.conf                 chezmoi 管理，修改后 Ctrl+b : source-file ~/.tmux.conf

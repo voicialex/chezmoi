@@ -25,8 +25,8 @@ _fatal() {
 _clipboard_tool() {
   if [ -n "${WAYLAND_DISPLAY:-}" ] && command -v wl-copy >/dev/null 2>&1; then
     echo "wl-copy"
-  elif { [ -n "${WSL_DISTRO_NAME:-}" ] || [ -n "${WSL_INTEROP:-}" ]; } && command -v clip.exe >/dev/null 2>&1; then
-    echo "clip.exe"
+  elif { [ -n "${WSL_DISTRO_NAME:-}" ] || [ -n "${WSL_INTEROP:-}" ]; } && command -v powershell.exe >/dev/null 2>&1; then
+    echo "powershell.exe"
   elif [ -n "${DISPLAY:-}" ] && command -v xclip >/dev/null 2>&1; then
     echo "xclip -sel clip"
   fi

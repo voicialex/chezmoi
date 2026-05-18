@@ -142,7 +142,7 @@ This repo keeps platform adaptation intentionally simple: **filter only files th
 Current behavior:
 
 - `wsl` / `headless`: skip `dot_config/gnome-terminal/`, `.chezmoiscripts/terminal-theme/run_once_apply-gnome-terminal-theme.sh`, and `dot_bash_components/bashrc.d/gnome-terminal-theme.sh`
-- clipboard and tmux integration stay deployed everywhere; they already auto-detect `wl-copy`, `clip.exe`, and `xclip` at runtime
+- clipboard and tmux integration stay deployed everywhere; OSC 52 primary, copy-pipe fallback auto-detects `wl-copy`, `powershell.exe` (UTF-8), and `xclip` at runtime
 - In WSL, `.chezmoiscripts/editor/run_sync-windows-editor-keybindings.sh` syncs:
   `~/.config/editor-keybindings/vscode-keybindings.jsonc` → `AppData/Roaming/Code/User/keybindings.json`
   `~/.config/editor-keybindings/cursor-keybindings.jsonc` → `AppData/Roaming/Cursor/User/keybindings.json`

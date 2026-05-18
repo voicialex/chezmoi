@@ -47,7 +47,7 @@ A chezmoi source state directory managing Bash dotfiles. Files are deployed to `
 | `~/.claude/claudeline` | `.chezmoiscripts/claude/run_install-claudeline.sh` | Checks every apply: downloads binary + patches settings.json if claude installed but claudeline missing |
 | `~/.claude/settings.json` | `dot_claude/modify_settings.json.tmpl` | Deep-merges managed keys (plugins, permissions, statusLine, etc.); user-set keys preserved |
 | `~/.codex/config.toml` | `dot_codex/modify_config.toml` | Ensures managed keys present (features, agents, tui, etc.); user-set keys preserved; add model_providers/projects manually |
-| `~/.tmux.conf` | `dot_tmux.conf` | Auto-detects clipboard tool: Wayland(`wl-copy`) → WSL(`clip.exe`) → X11(`xclip`); shows install hint if TPM missing |
+| `~/.tmux.conf` | `dot_tmux.conf` | Clipboard: OSC 52 primary + copy-pipe fallback (Wayland→`wl-copy`, WSL→`powershell.exe` UTF-8, X11→`xclip`); shows install hint if TPM missing |
 | `~/.tmux/plugins/tpm` | `.chezmoiscripts/tmux/run_once_install-tmux-plugins.sh` | Installs TPM + all plugins on first apply |
 | `~/.config/ghostty/config.ghostty` | `dot_config/ghostty/config.ghostty.tmpl` | Common Ghostty options (Linux only); GTK options conditional on OS; `create_config.local.ghostty` supplies per-machine overrides |
 | editor keybindings | `.chezmoiscripts/editor/run_sync-editor-keybindings.sh` | Syncs `dot_config/editor-keybindings/` to VS Code and Cursor keybindings paths |
