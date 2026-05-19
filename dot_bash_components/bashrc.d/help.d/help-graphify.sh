@@ -15,6 +15,12 @@ help-graphify() {
     graphify copilot install                 仅 GitHub Copilot CLI
     卸载: graphify <platform> uninstall
 
+  [Codex 首次安装（含 $graphify 技能）]
+    graphify install                         先确保 Claude 技能已就位
+    graphify codex install                   写入项目 AGENTS.md + 注册 hook
+    cp -rf ~/.claude/skills/graphify ~/.codex/skills/
+                                             同步技能文件到 Codex
+
   [过滤文件] 项目根目录创建 .graphifyignore（.gitignore 语法）
     node_modules/                            排除目录
     *.generated.py                           排除匹配文件
