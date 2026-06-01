@@ -19,10 +19,11 @@ help-git() {
     git rebase -i branch-name                把当前分支的提交移到目标分支最新位置之上
     pick / reword / squash / fixup / drop    常用动作
 
-  [amend] 修改历史提交
-    git commit --amend --author="<author_name> <author@email.com>"
-                                               改最近一笔的 author/email
-    git commit --amend                         改最近一笔的内容/message
+  [amend] 修改最近一笔提交
+    git commit --amend                         改内容/message（打开编辑器）
+    git commit --amend --no-edit               改内容但不改 message
+    git commit --amend --author="Name <email>" 改 author/email
+    git commit --amend --reset-author --no-edit  时间重置为现在
 
   [push]
     git push origin <branch> --force-with-lease
