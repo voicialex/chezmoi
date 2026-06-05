@@ -30,3 +30,19 @@ colorscheme desert
 
 " 文件类型自动识别 + 缩进
 filetype plugin indent on
+
+" ── vim-plug 自举：首次启动自动安装 ──────────────────────────────────────
+let s:plug_file = expand('~/.vim/autoload/plug.vim')
+if !filereadable(s:plug_file)
+  silent execute '!curl -fLo ' . s:plug_file . ' --create-dirs '
+    \ . 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+" ── 插件列表 ─────────────────────────────────────────────────────────────
+call plug#begin('~/.vim/plugged')
+  Plug 'tomtom/tcomment_vim'          " 按文件类型自动选择注释符
+call plug#end()
+
+" ── tcomment 提供 gcc（注释当前行）和 gc{motion} ────────────────────────
+" 无需额外映射，装完插件直接用 gcc 即可
