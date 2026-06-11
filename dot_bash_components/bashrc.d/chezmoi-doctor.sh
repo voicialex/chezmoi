@@ -189,6 +189,12 @@ chezmoi-doctor() {
     echo -e "  $ok Clipboard: $_cbt (tmux + nvim)"
   else
     echo -e "  $no Clipboard: 无剪贴板工具 (tmux + nvim)"
+    local _s="${XDG_SESSION_TYPE:-unset}"
+    [ "$_s" = x11 ] && _s="X11桌面" || [ "$_s" = wayland ] && _s="Wayland桌面" || [ "$_s" = tty ] && _s="TTY终端"
+    local _d="${DISPLAY:-${WAYLAND_DISPLAY:-unset}}"
+    local _wl=""; command -v wl-copy >/dev/null 2>&1 && _wl="wl-copy $ok" || _wl="wl-copy $no"
+    local _xc=""; command -v xclip >/dev/null 2>&1 && _xc="xclip $ok" || _xc="xclip $no"
+    echo -e "     $_s (DISPLAY=$_d) | $_wl  $_xc"
   fi
 
   echo ""
